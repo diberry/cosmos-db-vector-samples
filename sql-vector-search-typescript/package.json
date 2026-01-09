@@ -1,0 +1,32 @@
+{
+  "name": "sql-vector-search-typescript",
+  "version": "1.0.0",
+  "description": "Azure SQL Database vector search samples with TypeScript",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:embed": "node --env-file .env dist/create-embeddings.js",
+    "start:vector-search": "node --env-file .env dist/vector-search.js"
+  },
+  "keywords": [
+    "azure",
+    "sql",
+    "vector",
+    "search",
+    "embeddings",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/identity": "^4.11.1",
+    "openai": "^5.16.0",
+    "tedious": "^19.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/tedious": "^4.0.14",
+    "typescript": "^5.9.0"
+  }
+}

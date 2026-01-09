@@ -1,0 +1,34 @@
+{
+  "name": "postgresql-vector-search-typescript",
+  "version": "1.0.0",
+  "description": "Azure Database for PostgreSQL vector search samples with TypeScript using pgvector",
+  "type": "module",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start:embed": "node --env-file .env dist/create-embeddings.js",
+    "start:ivfflat": "node --env-file .env dist/ivfflat.js",
+    "start:hnsw": "node --env-file .env dist/hnsw.js"
+  },
+  "keywords": [
+    "azure",
+    "postgresql",
+    "pgvector",
+    "vector",
+    "search",
+    "embeddings",
+    "ai"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@azure/identity": "^4.11.1",
+    "openai": "^5.16.0",
+    "pg": "^8.13.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/pg": "^8.11.10",
+    "typescript": "^5.9.0"
+  }
+}

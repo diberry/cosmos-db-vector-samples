@@ -1,0 +1,23 @@
+{
+  "name": "cosmos-nosql-vector-search-typescript",
+  "version": "1.0.0",
+  "description": "Samples for Cosmos DB NoSQL vector search",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "start:embed": "node --env-file .env dist/create-embeddings.js",
+    "start:flat": "node --env-file .env dist/flat.js",
+    "start:quantized-flat": "node --env-file .env dist/quantized-flat.js",
+    "start:diskann": "node --env-file .env dist/diskann.js"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^4.3.0",
+    "@azure/identity": "^4.11.1",
+    "openai": "^5.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^24.3.0",
+    "typescript": "^5.9.2"
+  }
+}

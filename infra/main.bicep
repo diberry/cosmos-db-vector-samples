@@ -6,8 +6,7 @@ targetScope = 'subscription'
 param environmentName string
 
 @minLength(1)
-@description('Location for the OpenAI resource')
-// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cglobal-standard%2Cstandard-chat-completions#models-by-deployment-type
+@description('Location for all resources')
 @allowed([
   'eastus2'
   'swedencentral'
@@ -19,6 +18,21 @@ param environmentName string
 })
 param location string
 
+@description('Location for Azure OpenAI resource (defaults to main location if not specified). Not all models are available in all regions.')
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cglobal-standard%2Cstandard-chat-completions#models-by-deployment-type
+@allowed([
+  'eastus'
+  'eastus2'
+  'eastus3'
+  'westus'
+  'westus2'
+  'westus3'
+  'northeurope'
+  'swedencentral'
+])
+@metadata({ azd: { type: 'location' } })
+param openAiLocation string = location
+
 @description('Id of the principal to assign database and application roles.')
 param deploymentUserPrincipalId string = ''
 
@@ -26,17 +40,33 @@ var resourceToken = toLower(uniqueString(subscription().id, environmentName, loc
 var tags = { 'azd-env-name': environmentName }
 var prefix = '${environmentName}${resourceToken}'
 
-// Azure OpenAI model and configuration variables
-var chatModelName = 'gpt-4o-mini'
-var chatModelVersion = '2024-07-18'
+// Azure OpenAI model and configuration parameters
+// https://learn.microsoft.com/azure/ai-services/openai/concepts/models?tabs=python-secure%2Cglobal-standard%2Cstandard-chat-completions#models-by-deployment-type
+// To change deployment type, swap 'Standard' ↔ 'GlobalStandard' in the sku name parameters below.
+// gpt-4o-mini Standard was deprecated 2026-03-31; use gpt-4.1-mini instead.
+
+@description('Chat model name')
+param chatModelName string = 'gpt-4.1-mini'
+
+@description('Chat model version')
+param chatModelVersion string = '2025-04-14'
+
+@description('Chat model deployment type: Standard or GlobalStandard')
+param chatModelSkuName string = 'Standard'
+
 var chatModelApiVersion = '2024-08-01-preview'
-var chatModelSkuName = 'GlobalStandard'
 var chatModelCapacity = 50
 
-var embeddingModelName = 'text-embedding-3-small'
-var embeddingModelVersion = '1'
+@description('Embedding model name')
+param embeddingModelName string = 'text-embedding-3-small'
+
+@description('Embedding model version')
+param embeddingModelVersion string = '1'
+
+@description('Embedding model deployment type: Standard or GlobalStandard')
+param embeddingModelSkuName string = 'Standard'
+
 var embeddingModelApiVersion = '2024-08-01-preview'
-var embeddingModelSkuName = 'Standard'
 var embeddingModelCapacity = 10
 
 // Organize resources in a resource group
@@ -67,12 +97,12 @@ var embeddingBatchSize = '16'
 var loadSizeBatch = '50'
 
 var openAiServiceName = 'openai-${prefix}'
-module openAi 'br/public:avm/res/cognitive-services/account:0.7.1' = {
+module openAi 'br/public:avm/res/cognitive-services/account:0.10.0' = {
   name: 'openai'
   scope: resourceGroup
   params: {
     name: openAiServiceName
-    location: location
+    location: openAiLocation
     tags: tags
     kind: 'OpenAI'
     sku: 'S0'

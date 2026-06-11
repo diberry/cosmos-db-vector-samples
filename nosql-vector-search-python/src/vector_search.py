@@ -40,18 +40,8 @@ ALGORITHM_CONFIGS: dict[str, dict[str, str]] = {
 }
 
 
-VALID_DISTANCE_FUNCTIONS = ["cosine", "euclidean", "dotproduct"]
-
-
-def _build_config() -> dict[str, str | int | bool]:
+def _build_config() -> dict[str, str | int]:
     """Build runtime configuration from environment variables."""
-    distance_func = os.getenv("VECTOR_DISTANCE_FUNCTION", "cosine").strip().lower()
-    if distance_func not in VALID_DISTANCE_FUNCTIONS:
-        valid = ", ".join(VALID_DISTANCE_FUNCTIONS)
-        raise ValueError(
-            f"Invalid distance function '{distance_func}'. Must be one of: {valid}"
-        )
-    
     return {
         "query": "quintessential lodging near running trails, eateries, retail",
         "db_name": os.getenv("AZURE_COSMOSDB_DATABASENAME", "Hotels"),
@@ -60,8 +50,7 @@ def _build_config() -> dict[str, str | int | bool]:
         "embedded_field": os.getenv("EMBEDDED_FIELD", "DescriptionVector"),
         "embedding_dimensions": int(os.getenv("EMBEDDING_DIMENSIONS", "1536")),
         "deployment": os.getenv("AZURE_OPENAI_EMBEDDING_MODEL", "text-embedding-3-small"),
-        "distance_function": distance_func,
-        "compare_all_metrics": os.getenv("COMPARE_DISTANCE_METRICS", "false").lower() == "true",
+        "distance_function": os.getenv("VECTOR_DISTANCE_FUNCTION", "cosine"),
     }
 
 
@@ -78,6 +67,13 @@ def main() -> None:
     db_client = clients["db_client"]
 
     try:
+        algorithm = config["algorithm"]
+        if algorithm not in ALGORITHM_CONFIGS:
+            valid = ", ".join(ALGORITHM_CONFIGS)
+            raise ValueError(
+                f"Invalid algorithm '{algorithm}'. Must be one of: {valid}"
+            )
+
         if not ai_client:
             raise RuntimeError(
                 "Azure OpenAI client is not configured. "
@@ -89,261 +85,80 @@ def main() -> None:
                 "Please check your environment variables."
             )
 
+        algo_cfg = ALGORITHM_CONFIGS[algorithm]
+        container_name = algo_cfg["container_name"]
+
         database = db_client.get_database_client(config["db_name"])
         print(f"Connected to database: {config['db_name']}")
+
+        container = database.get_container_client(container_name)
+        print(f"Connected to container: {container_name}")
+        print(f"\n📊 Vector Search Algorithm: {algo_cfg['algorithm_name']}")
+        print(f"📏 Distance Function: {config['distance_function']}")
+
+        # Verify the container exists
+        try:
+            container.read()
+        except Exception as e:
+            status_code = getattr(e, "status_code", None)
+            if status_code == 404:
+                raise RuntimeError(
+                    f"Container or database not found. Ensure database "
+                    f"'{config['db_name']}' and container '{container_name}' "
+                    f"exist before running this script."
+                ) from e
+            raise
+
+        data_path = Path(__file__).parent.parent / config["data_file"]
+        data = read_file_return_json(str(data_path))
+        insert_data(container, data)
 
         embedding_response = ai_client.embeddings.create(
             model=config["deployment"],
             input=[config["query"]],
         )
         query_embedding = embedding_response.data[0].embedding
-        print(f"\nEmbedding generated: type={type(query_embedding)}, length={len(query_embedding)}, first_3_elements={query_embedding[:3]}")
 
         safe_field = validate_field_name(config["embedded_field"])
-        
-        # Run full comparison across all algorithms, or just single algorithm
-        if config["compare_all_metrics"]:
-            _run_algorithm_metric_comparison(
-                database, config["db_name"], safe_field, query_embedding, config
-            )
-        else:
-            # Single algorithm mode
-            algorithm = config["algorithm"]
-            if algorithm not in ALGORITHM_CONFIGS:
-                valid = ", ".join(ALGORITHM_CONFIGS)
-                raise ValueError(
-                    f"Invalid algorithm '{algorithm}'. Must be one of: {valid}"
-                )
-            
-            algo_cfg = ALGORITHM_CONFIGS[algorithm]
-            container_name = algo_cfg["container_name"]
-            container = database.get_container_client(container_name)
-            print(f"Connected to container: {container_name}")
-            print(f"\n📊 Vector Search Algorithm: {algo_cfg['algorithm_name']}")
-
-            # Verify the container exists
-            try:
-                container.read()
-            except Exception as e:
-                status_code = getattr(e, "status_code", None)
-                if status_code == 404:
-                    raise RuntimeError(
-                        f"Container or database not found. Ensure database "
-                        f"'{config['db_name']}' and container '{container_name}' "
-                        f"exist before running this script."
-                    ) from e
-                raise
-
-            data_path = Path(__file__).parent.parent / config["data_file"]
-            data = read_file_return_json(str(data_path))
-            insert_data(container, data)
-            
-            _run_single_metric_query(
-                container, safe_field, query_embedding,
-                config["distance_function"], config["query"]
-            )
-
-    except Exception as error:
-        print(f"App failed: {error}", file=sys.stderr)
-        sys.exit(1)
-
-
-def _run_single_metric_query(
-    container, safe_field: str, query_embedding: list, 
-    distance_function: str, query_text: str
-) -> None:
-    """Execute vector search with a single distance metric."""
-    print(f"📏 Distance Function: {distance_function}")
-    
-    query = (
-        f'SELECT TOP 5 c.HotelName, c.Description, c.Rating, '
-        f'VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{distance_function}"}}) AS SimilarityScore '
-        f'FROM c '
-        f'ORDER BY VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{distance_function}"}})'
-    )
-
-    print("\n--- Executing Vector Search Query ---")
-    print(f"Query: {query}")
-    print(
-        f"Parameters: @embedding (vector with {len(query_embedding)} dimensions)"
-    )
-    print("--------------------------------------\n")
-
-    results = list(
-        container.query_items(
-            query=query,
-            parameters=[{"name": "@embedding", "value": query_embedding}],
-            enable_cross_partition_query=True,
+        query_text = (
+            f"SELECT TOP 5 c.HotelName, c.Description, c.Rating, "
+            f"VectorDistance(c.{safe_field}, @embedding) AS SimilarityScore "
+            f"FROM c "
+            f"ORDER BY VectorDistance(c.{safe_field}, @embedding)"
         )
-    )
 
-    # Extract diagnostics
-    response_headers = container.client_connection.last_response_headers
-    activity_id = get_query_activity_id(response_headers)
-    if activity_id:
-        print(f"Query activity ID: {activity_id}")
-
-    request_charge_raw = response_headers.get("x-ms-request-charge", "0") if response_headers else "0"
-    try:
-        request_charge = float(request_charge_raw)
-    except (ValueError, TypeError):
-        request_charge = 0.0
-
-    print_search_results(results, request_charge)
-
-
-def _run_algorithm_metric_comparison(
-    database, db_name: str, safe_field: str, query_embedding: list, config: dict
-) -> None:
-    """Execute comparison across all algorithms and all 3 distance metrics, showing results in a table."""
-    print("\n" + "="*100)
-    print("Compare All Algorithms x Metrics")
-    print("="*100)
-    print("6 combinations: DiskANN, QuantizedFlat x COS, L2, IP")
-    print("="*100 + "\n")
-    
-    algorithms = list(ALGORITHM_CONFIGS.keys())
-    metrics = ["cosine", "euclidean", "dotproduct"]
-    metric_labels = {"cosine": "COS", "euclidean": "L2", "dotproduct": "IP"}
-    
-    # Collect all results: {algo: {metric: results}}
-    all_results = {}
-    
-    for algorithm in algorithms:
-        algo_cfg = ALGORITHM_CONFIGS[algorithm]
-        container_name = algo_cfg["container_name"]
-        algo_label = algo_cfg["algorithm_name"]
-        
-        print(f"Querying {algo_label}...")
-        all_results[algorithm] = {}
-        
-        try:
-            container = database.get_container_client(container_name)
-            container.read()
-            
-            # Insert data if needed
-            data_path = Path(__file__).parent.parent / config["data_file"]
-            data = read_file_return_json(str(data_path))
-            insert_data(container, data)
-            
-            # Run queries for all 3 metrics
-            for metric in metrics:
-                query = (
-                    f'SELECT TOP 2 c.HotelName, c.Description, c.Rating, '
-                    f'VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{metric}"}}) AS SimilarityScore '
-                    f'FROM c '
-                    f'ORDER BY VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{metric}"}})'
-                )
-                
-                results = list(
-                    container.query_items(
-                        query=query,
-                        parameters=[{"name": "@embedding", "value": query_embedding}],
-                        enable_cross_partition_query=True,
-                    )
-                )
-                all_results[algorithm][metric] = results
-        
-        except Exception as e:
-            print(f"  Error querying {algo_label}: {e}")
-            all_results[algorithm] = {m: [] for m in metrics}
-    
-    # Print comparison table
-    print("\n| Algorithm | Metric | Top 1 Result            | Score  | Top 2 Result            | Score  |")
-    print("|-----------|--------|------------------------|--------|------------------------|--------|")
-    
-    for algorithm in algorithms:
-        algo_cfg = ALGORITHM_CONFIGS[algorithm]
-        algo_label = algo_cfg["algorithm_name"]
-        
-        for metric in metrics:
-            metric_label = metric_labels[metric]
-            results = all_results.get(algorithm, {}).get(metric, [])
-            
-            top1_name = results[0]["HotelName"] if len(results) > 0 else "N/A"
-            top1_score = f"{results[0]['SimilarityScore']:.4f}" if len(results) > 0 else "N/A"
-            
-            top2_name = results[1]["HotelName"] if len(results) > 1 else "N/A"
-            top2_score = f"{results[1]['SimilarityScore']:.4f}" if len(results) > 1 else "N/A"
-            
-            # Truncate names to fit table
-            top1_name_short = (top1_name[:20] + "..") if len(top1_name) > 20 else top1_name
-            top2_name_short = (top2_name[:20] + "..") if len(top2_name) > 20 else top2_name
-            
-            print(f"| {algo_label:<9} | {metric_label:<6} | {top1_name_short:<24} | {top1_score:>6} | {top2_name_short:<24} | {top2_score:>6} |")
-    
-    print("\n" + "="*100)
-    print(f"Summary: Compared {len(algorithms)} algorithms x {len(metrics)} metrics = {len(algorithms) * len(metrics)} combinations")
-    print("="*100)
-
-
-def _run_metric_comparison(
-    container, safe_field: str, query_embedding: list,
-    query_text: str, embedding: list
-) -> None:
-    """Execute vector search with all 3 distance metrics and display comparison."""
-    print("📏 Comparing all distance functions: cosine, euclidean, dotproduct\n")
-    
-    metrics = ["cosine", "euclidean", "dotproduct"]
-    metric_display_names = {"cosine": "Cosine", "euclidean": "Euclidean", "dotproduct": "DotProduct"}
-    all_results = {}
-    total_charge = 0.0
-    
-    for metric in metrics:
-        display_name = metric_display_names[metric]
-        print(f"\n--- {display_name} Distance Search ---")
-        
-        query = (
-            f'SELECT TOP 5 c.HotelName, c.Description, c.Rating, '
-            f'VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{metric}"}}) AS SimilarityScore '
-            f'FROM c '
-            f'ORDER BY VectorDistance(c.{safe_field}, @embedding, false, {{"distanceFunction": "{metric}"}})'
+        print("\n--- Executing Vector Search Query ---")
+        print(f"Query: {query_text}")
+        print(
+            f"Parameters: @embedding (vector with {len(query_embedding)} dimensions)"
         )
-        
-        print(f"\n--- Query for {display_name} ---")
-        print(f"Query: {query}")
-        print(f"Embedding param type: {type(query_embedding)}, length: {len(query_embedding)}")
-        
+        print("--------------------------------------\n")
+
         results = list(
             container.query_items(
-                query=query,
+                query=query_text,
                 parameters=[{"name": "@embedding", "value": query_embedding}],
                 enable_cross_partition_query=True,
             )
         )
-        
+
         # Extract diagnostics
         response_headers = container.client_connection.last_response_headers
+        activity_id = get_query_activity_id(response_headers)
+        if activity_id:
+            print(f"Query activity ID: {activity_id}")
+
         request_charge_raw = response_headers.get("x-ms-request-charge", "0") if response_headers else "0"
         try:
             request_charge = float(request_charge_raw)
         except (ValueError, TypeError):
             request_charge = 0.0
-        
-        total_charge += request_charge
-        all_results[metric] = {
-            "results": results,
-            "charge": request_charge
-        }
-        
+
         print_search_results(results, request_charge)
-    
-    # Print comparison summary
-    print("\n" + "="*80)
-    print("📊 DISTANCE METRIC COMPARISON SUMMARY")
-    print("="*80)
-    
-    for metric in metrics:
-        display_name = metric_display_names[metric]
-        charge = all_results[metric]["charge"]
-        print(f"\n{display_name}:")
-        print(f"  Request Charge: {charge:.2f} RUs")
-        if all_results[metric]["results"]:
-            top_result = all_results[metric]["results"][0]
-            print(f"  Top Result: {top_result.get('HotelName', 'N/A')} (Score: {top_result.get('SimilarityScore', 'N/A'):.4f})")
-    
-    print(f"\nTotal Request Charge (all 3 metrics): {total_charge:.2f} RUs")
-    print("="*80)
+
+    except Exception as error:
+        print(f"App failed: {error}", file=sys.stderr)
+        sys.exit(1)
 
 
 if __name__ == "__main__":

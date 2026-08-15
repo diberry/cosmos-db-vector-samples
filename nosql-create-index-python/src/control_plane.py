@@ -11,6 +11,7 @@ from typing import TYPE_CHECKING, Any
 from azure.core.exceptions import HttpResponseError
 from azure.identity import DefaultAzureCredential
 from azure.mgmt.cosmosdb import CosmosDBManagementClient
+from azure.mgmt.cosmosdb.models import SqlContainerCreateUpdateParameters, SqlContainerResource
 
 if TYPE_CHECKING:
     from .config import SampleConfig
@@ -79,9 +80,10 @@ def create_containers(credential: DefaultAzureCredential, config: SampleConfig) 
     )
 
     embedding_path = f"/{config.embedding_field_name}"
+    from . import config as config_module
     containers_config = [
-        {"type": "diskANN", "container_name": "hotels_diskann_py"},
-        {"type": "QuantizedFlat", "container_name": "hotels_quantizedflat_py"},
+        {"type": "diskANN", "container_name": config_module.KNOWN_CONTAINERS["diskann"]},
+        {"type": "QuantizedFlat", "container_name": config_module.KNOWN_CONTAINERS["quantizedflat"]},
     ]
 
     for container_config in containers_config:
@@ -115,11 +117,11 @@ def create_containers(credential: DefaultAzureCredential, config: SampleConfig) 
             index_type=container_config["type"]
         )
 
-        # Create container using raw payload
-        # The ARM SDK accepts the payload as a dict, which it serializes to JSON
-        params = {
-            "resource": container_payload
-        }
+        # Wrap the environment-derived resource name in the typed ARM model so
+        # the SDK preserves the container id in the request body.
+        params = SqlContainerCreateUpdateParameters(
+            resource=SqlContainerResource(container_payload)
+        )
 
         client.sql_resources.begin_create_update_sql_container(
             resource_group_name=config.resource_group,
@@ -146,7 +148,8 @@ def delete_containers(credential: DefaultAzureCredential, config: SampleConfig) 
     )
 
     # Always try to delete both containers, regardless of which one is active
-    container_names = ["hotels_diskann_py", "hotels_quantizedflat_py"]
+    from . import config as config_module
+    container_names = list(config_module.KNOWN_CONTAINERS.values())
 
     for container_name in container_names:
         try:

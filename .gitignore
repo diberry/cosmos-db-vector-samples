@@ -10,6 +10,12 @@
 *.userosscache
 *.sln.docstates
 *.env
+**/.env
+**/appsettings.json
+**/output/create-index-run-*/
+**/output/run-*/
+.github/scripts/output/validation-*/
+.github/scripts/output/[0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]-[0-9][0-9][0-9][0-9][0-9][0-9]/
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
@@ -444,4 +450,6 @@ target/
 
 # Allow sample.env templates
 !**/sample.env
+!**/.env.example
+!**/appsettings.example.json
 nosql-create-index-*/data/*.json

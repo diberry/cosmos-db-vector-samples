@@ -2,11 +2,13 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"os/exec"
 	"strings"
 	"time"
 
+	"github.com/Azure/azure-sdk-for-go/sdk/azcore"
 	"github.com/Azure/azure-sdk-for-go/sdk/azcore/runtime"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v3"
@@ -216,3 +218,54 @@ func CreateContainersWithVectorIndexes(
 	return nil
 }
 
+func DeleteContainers(ctx context.Context, credential *azidentity.DefaultAzureCredential, cfg *Config) error {
+	client, err := armcosmos.NewSQLResourcesClient(cfg.SubscriptionID, credential, nil)
+	if err != nil {
+		return fmt.Errorf("failed to create SQL resources client: %w", err)
+	}
+
+	for _, containerName := range []string{cfg.DiskANNContainerName, cfg.QuantizedFlatContainerName} {
+		fmt.Printf("  Deleting %s...\n", containerName)
+		start := time.Now()
+		deleteCtx, cancel := context.WithTimeout(ctx, 2*time.Minute)
+
+		poller, err := client.BeginDeleteSQLContainer(
+			deleteCtx,
+			cfg.ResourceGroup,
+			cfg.AccountName,
+			cfg.DatabaseName,
+			containerName,
+			nil,
+		)
+		if err != nil {
+			cancel()
+			if isNotFound(err) {
+				fmt.Printf("  ✓ Container does not exist: %s\n", containerName)
+				continue
+			}
+			return fmt.Errorf("failed to delete container %q: %w", containerName, err)
+		}
+
+		_, err = poller.PollUntilDone(
+			deleteCtx,
+			&runtime.PollUntilDoneOptions{Frequency: 5 * time.Second},
+		)
+		cancel()
+		if err != nil {
+			if isNotFound(err) {
+				fmt.Printf("  ✓ Container does not exist: %s\n", containerName)
+				continue
+			}
+			return fmt.Errorf("failed to wait for container deletion %q: %w", containerName, err)
+		}
+
+		fmt.Printf("  ✓ Deleted %s in %.1fs\n", containerName, time.Since(start).Seconds())
+	}
+
+	return nil
+}
+
+func isNotFound(err error) bool {
+	var responseError *azcore.ResponseError
+	return errors.As(err, &responseError) && responseError.StatusCode == 404
+}

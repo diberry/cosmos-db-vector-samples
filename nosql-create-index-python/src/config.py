@@ -7,9 +7,20 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import Mapping, Optional, Sequence
 
+
+def _container_name(environment_variable: str, default: str) -> str:
+    return (os.getenv(environment_variable) or "").strip() or default
+
+
 KNOWN_CONTAINERS = {
-    "diskann": "hotels_diskann_py",
-    "quantizedflat": "hotels_quantizedflat_py",
+    "diskann": _container_name(
+        "AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME",
+        "hotels_diskann",
+    ),
+    "quantizedflat": _container_name(
+        "AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME",
+        "hotels_quantizedflat",
+    ),
 }
 
 REQUIRED_ENV_VARS = (
@@ -130,10 +141,12 @@ def load_config(env: Optional[Mapping[str, str]] = None) -> SampleConfig:
 
 
 def validate_config(config: SampleConfig) -> None:
-    missing = [name for name in REQUIRED_ENV_VARS if not getattr(config, _env_to_field(name))]
+    # Validate all required variables, including ARM SDK variables needed for control plane operations
+    all_required = REQUIRED_ENV_VARS + CONTROL_PLANE_ENV_VARS
+    missing = [name for name in all_required if not getattr(config, _env_to_field(name))]
     if missing:
         raise ConfigError(
-            "Missing required environment variables: {0}".format(", ".join(missing))
+            "Missing required environment variables for control plane operations: {0}".format(", ".join(missing))
         )
 
     if config.vector_algorithm and config.vector_algorithm not in KNOWN_CONTAINERS:
@@ -192,5 +205,8 @@ def _env_to_field(env_name: str) -> str:
         "AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME": "database_name",
         "AZURE_OPENAI_EMBEDDING_ENDPOINT": "openai_embedding_endpoint",
         "AZURE_OPENAI_EMBEDDING_DEPLOYMENT": "openai_embedding_deployment",
+        "AZURE_SUBSCRIPTION_ID": "subscription_id",
+        "AZURE_RESOURCE_GROUP": "resource_group",
+        "AZURE_COSMOSDB_ACCOUNT_NAME": "account_name",
     }
     return mapping[env_name]

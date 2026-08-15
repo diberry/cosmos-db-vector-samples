@@ -1,5 +1,22 @@
 # GitHub Copilot Instructions for Azure Cosmos DB Vector Samples
 
+## Create-index samples
+
+For any file under `nosql-create-index-*/**`, the sole authority is the
+[create-index samples constitution](CREATE-INDEX-CONSTITUTION.md).
+
+The constitution governs configuration, resource names, control-plane
+operations, authentication, Azure Developer CLI lifecycle commands, hooks,
+validation, output, cleanup, documentation, and tests. Do not duplicate or
+override create-index rules in this file or in another instruction file.
+
+For all other `nosql-*` samples, the general data-plane-only rules below apply.
+
+## General NoSQL sample rules
+
+The following rules apply only to `nosql-*` samples other than
+`nosql-create-index-*`.
+
 ## Authentication and Authorization
 
 This repository uses **Microsoft Entra ID (formerly Azure AD)** authentication with data plane RBAC only.

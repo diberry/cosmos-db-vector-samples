@@ -1,11 +1,23 @@
 ---
 applyTo: "nosql-*/**"
 ---
-# Execution Patterns — Cosmos DB NoSQL Vector Search Samples
+# Execution patterns — Cosmos DB NoSQL vector-search samples
 
-## Two-Phase Execution Model
+> [!IMPORTANT]
+> This file governs `nosql-vector-search-*` samples.
+> For `nosql-create-index-*` samples, follow
+> [CREATE-INDEX-CONSTITUTION.md](../CREATE-INDEX-CONSTITUTION.md)
+> exclusively. Create-index samples have a separate lifecycle and
+> intentionally create and delete containers through control-plane SDKs.
 
-Cosmos DB NoSQL vector samples use an **infra-first** pattern. Infrastructure and application code have completely separate responsibilities.
+The execution model, container rules, and failure guidance below apply only to
+vector-search samples.
+
+## Two-phase execution model for vector-search samples
+
+Cosmos DB NoSQL vector-search samples use an **infra-first** pattern.
+Infrastructure and application code have completely separate
+responsibilities. Create-index samples are governed by the constitution.
 
 ### Phase 1: Infrastructure Deployment (`azd up`)
 
@@ -20,7 +32,10 @@ Handled entirely by Bicep/ARM templates. The application code NEVER performs any
 | 5. Create vector index | Algorithm-specific index matching embedding policy | **YES — immutable** |
 | 6. Assign RBAC | Custom role "Write to Azure Cosmos DB for NoSQL data plane" with specific data actions (defined in Bicep) | — |
 
-**Critical:** Once a container's vector embedding policy is set, it CANNOT be changed. Containers are infrastructure — not disposable resources.
+**Critical:** Once a container's vector embedding policy is set, it CANNOT be
+changed. For vector-search samples, containers are infrastructure and are not
+disposable application resources. Create-index container lifecycle is defined
+by the constitution.
 
 ### Phase 2: Application Runtime
 
@@ -113,7 +128,7 @@ Two containers — one per algorithm:
 - **Partition key:** `/HotelId`
 - **Embedding field naming:** Use generic `DescriptionVector` or `vector` — NOT model-specific names (e.g., not `text_embedding_ada_002`)
 
-## What the Code NEVER Does
+## What vector-search code never does
 
 | Operation | Why Not |
 |-----------|---------|

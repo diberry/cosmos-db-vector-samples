@@ -26,6 +26,7 @@ In this quickstart, you run the Java create-index sample for Azure Cosmos DB for
   - **Cosmos DB Built-in Data Contributor**
   - **Cognitive Services OpenAI User**
 - An Azure OpenAI resource with a `text-embedding-3-small` deployment.
+- To enable infrastructure provisioning for the create-index scenario, set `AZURE_COSMOSDB_CREATE_INDEX_DATABASE_NAME=HotelsCreateIndex` before running `azd up`. The infrastructure creates both the `Hotels` (vector search) and `HotelsCreateIndex` (create-index) databases.
 
 > [!IMPORTANT]
 > **Two Phases:**
@@ -92,7 +93,7 @@ Both phases use `DefaultAzureCredential` for authentication, so you don't need t
    **Otherwise**, copy the template and fill in values from the Azure portal:
 
    ```bash
-   cp sample.env .env
+    cp .env.example .env
    ```
 
 2. Update `.env` with your Azure resource values:
@@ -175,7 +176,6 @@ nosql-create-index-java/
 │   └── sample-output.txt
 ├── pom.xml
 ├── README.md
-├── sample.env
 └── src/main/java/com/azure/cosmos/createindex/
     ├── App.java
     ├── Config.java

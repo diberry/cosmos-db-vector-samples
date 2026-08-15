@@ -9,6 +9,8 @@ export interface SampleConfig {
     endpoint?: string;
     databaseName: string;
     containerName: string;
+    diskannContainerName: string;
+    quantizedflatContainerName: string;
   };
   openai: {
     endpoint?: string;
@@ -35,7 +37,9 @@ export function loadConfigFromEnv(
       accountName: env.AZURE_COSMOSDB_ACCOUNT_NAME,
       endpoint: env.AZURE_COSMOSDB_ENDPOINT,
       databaseName: env.AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME || "HotelsCreateIndex",
-      containerName: env.AZURE_COSMOSDB_CONTAINER_NAME || "hotels_diskann_ts",
+      containerName: env.AZURE_COSMOSDB_CONTAINER_NAME || "hotels_diskann",
+      diskannContainerName: env.AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME || "hotels_diskann",
+      quantizedflatContainerName: env.AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME || "hotels_quantizedflat",
     },
     openai: {
       endpoint: env.AZURE_OPENAI_ENDPOINT,
@@ -56,9 +60,18 @@ export function loadConfigFromEnv(
 }
 
 export function getMissingEnvironmentVariables(config: SampleConfig): string[] {
+  // All required variables including ARM SDK variables needed for control plane operations
   const required: Array<[string, string | undefined]> = [
     ["AZURE_COSMOSDB_ENDPOINT", config.cosmos.endpoint],
-    ["AZURE_OPENAI_ENDPOINT", config.openai.endpoint],
+    ["AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME", config.cosmos.databaseName],
+    ["AZURE_OPENAI_EMBEDDING_ENDPOINT", config.openai.endpoint],
+    ["AZURE_OPENAI_EMBEDDING_DEPLOYMENT", config.openai.embeddingDeployment],
+    ["DATA_FILE_WITH_VECTORS_AND_REGIONS", config.dataFile],
+    // ARM SDK variables required for control plane operations
+    ["AZURE_SUBSCRIPTION_ID", config.azure.subscriptionId],
+    ["AZURE_RESOURCE_GROUP", config.azure.resourceGroup],
+    ["AZURE_COSMOSDB_ACCOUNT_NAME", config.cosmos.accountName],
+    ["AZURE_LOCATION", config.azure.location],
   ];
 
   return required.filter(([, value]) => !value).map(([name]) => name);
@@ -72,7 +85,7 @@ export function validateRequiredEnvironmentVariables(config: SampleConfig): void
   }
 
   throw new Error(
-    `Missing required environment variables: ${missing.join(", ")}. ` +
+    `Missing required environment variables for control plane operations: ${missing.join(", ")}. ` +
       "Run 'azd up' first, or populate .env manually with 'azd env get-values > .env'."
   );
 }

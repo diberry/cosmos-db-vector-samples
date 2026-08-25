@@ -1,0 +1,190 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Editorial validation",
+  "description": "The editorial gate's own evidence for gate-owned publication conventions. Records per-file, per-convention check results for branding, metadata, backticks, style, accessibility, terminology, and presentation.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "gateType",
+    "gateName",
+    "gateVersion",
+    "policyName",
+    "policyVersion",
+    "files",
+    "summary"
+  ],
+  "definitions": {
+    "convention": {
+      "type": "string",
+      "enum": [
+        "backtick-hardcoded-values-and-options",
+        "microsoft-branding",
+        "product-branding",
+        "learn-mosaic-metadata",
+        "style",
+        "accessibility",
+        "terminology-presentation",
+        "heading",
+        "list",
+        "table",
+        "link-presentation",
+        "scanability"
+      ],
+      "description": "A publication convention owned by the editorial gate."
+    },
+    "checkResult": {
+      "type": "string",
+      "enum": ["pass", "fail", "not-applicable"],
+      "description": "Result of a convention check."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "gateType": {
+      "type": "string",
+      "enum": ["mosaic", "approved-equivalent"],
+      "description": "Which editorial gate produced this validation."
+    },
+    "gateName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the editorial gate."
+    },
+    "gateVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version of the editorial gate."
+    },
+    "policyName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Name of the editorial policy."
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Version of the editorial policy."
+    },
+    "files": {
+      "type": "array",
+      "description": "Per-file editorial check results.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "checks"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path to the file."
+          },
+          "checks": {
+            "type": "array",
+            "description": "Individual convention checks.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["checkId", "convention", "result", "detail", "locator"],
+              "properties": {
+                "checkId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Unique check identifier."
+                },
+                "convention": {
+                  "$ref": "#/definitions/convention"
+                },
+                "result": {
+                  "$ref": "#/definitions/checkResult"
+                },
+                "detail": {
+                  "type": "string",
+                  "description": "Detail about the check result."
+                },
+                "locator": {
+                  "type": "string",
+                  "description": "Location within the file (line number, heading, or range)."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Aggregate editorial validation results.",
+      "required": [
+        "backtickHardcodedValuesAndOptionsPass",
+        "backtickHardcodedValuesAndOptionsFail",
+        "microsoftBrandingPass",
+        "microsoftBrandingFail",
+        "productBrandingPass",
+        "productBrandingFail",
+        "learnMosaicMetadataPass",
+        "learnMosaicMetadataFail",
+        "stylePass",
+        "styleFail",
+        "accessibilityPass",
+        "accessibilityFail",
+        "terminologyPresentationPass",
+        "terminologyPresentationFail",
+        "headingPass",
+        "headingFail",
+        "listPass",
+        "listFail",
+        "tablePass",
+        "tableFail",
+        "linkPresentationPass",
+        "linkPresentationFail",
+        "scanabilityPass",
+        "scanabilityFail",
+        "overallResult"
+      ],
+      "properties": {
+        "backtickHardcodedValuesAndOptionsPass": { "type": "integer", "minimum": 0 },
+        "backtickHardcodedValuesAndOptionsFail": { "type": "integer", "minimum": 0 },
+        "microsoftBrandingPass": { "type": "integer", "minimum": 0 },
+        "microsoftBrandingFail": { "type": "integer", "minimum": 0 },
+        "productBrandingPass": { "type": "integer", "minimum": 0 },
+        "productBrandingFail": { "type": "integer", "minimum": 0 },
+        "learnMosaicMetadataPass": { "type": "integer", "minimum": 0 },
+        "learnMosaicMetadataFail": { "type": "integer", "minimum": 0 },
+        "stylePass": { "type": "integer", "minimum": 0 },
+        "styleFail": { "type": "integer", "minimum": 0 },
+        "accessibilityPass": { "type": "integer", "minimum": 0 },
+        "accessibilityFail": { "type": "integer", "minimum": 0 },
+        "terminologyPresentationPass": { "type": "integer", "minimum": 0 },
+        "terminologyPresentationFail": { "type": "integer", "minimum": 0 },
+        "headingPass": { "type": "integer", "minimum": 0 },
+        "headingFail": { "type": "integer", "minimum": 0 },
+        "listPass": { "type": "integer", "minimum": 0 },
+        "listFail": { "type": "integer", "minimum": 0 },
+        "tablePass": { "type": "integer", "minimum": 0 },
+        "tableFail": { "type": "integer", "minimum": 0 },
+        "linkPresentationPass": { "type": "integer", "minimum": 0 },
+        "linkPresentationFail": { "type": "integer", "minimum": 0 },
+        "scanabilityPass": { "type": "integer", "minimum": 0 },
+        "scanabilityFail": { "type": "integer", "minimum": 0 },
+        "overallResult": {
+          "type": "string",
+          "enum": ["pass", "fail"],
+          "description": "Overall editorial validation result."
+        }
+      }
+    }
+  }
+}

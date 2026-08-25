@@ -1,0 +1,278 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Protected technical contract",
+  "description": "Stage 9 protected-technical-contract artifact (09-protected-technical-contract.json). Captures the immutable technical surface — commands, environment variables, resource boundaries, claims, citations, and protected tokens — before editorial processing.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "contractHash",
+    "articles"
+  ],
+  "definitions": {
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hash in lowercase hex."
+    },
+    "citation": {
+      "type": "object",
+      "description": "Source citation tracing a claim to an authoritative file, revision, and location.",
+      "additionalProperties": false,
+      "required": ["sourcePath", "sourceRevision", "locator", "excerpt"],
+      "properties": {
+        "sourcePath": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Absolute path to the source file."
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Commit SHA or version of the source."
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Heading, line number, or anchor within the source."
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Verbatim excerpt from the source supporting the claim."
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "contractHash": {
+      "$ref": "#/definitions/sha256",
+      "description": "SHA-256 hash of this contract for integrity verification."
+    },
+    "articles": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Per-article protected technical surfaces.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "articleId",
+          "language",
+          "draftPath",
+          "draftHash",
+          "commands",
+          "environmentVariables",
+          "resourceNames",
+          "resourceBoundaries",
+          "authenticationBehaviors",
+          "safetyGates",
+          "cleanupBehaviors",
+          "claims",
+          "citations",
+          "languageFacts",
+          "protectedTokens",
+          "protectedLinks"
+        ],
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique article identifier."
+          },
+          "language": {
+            "$ref": "#/definitions/language"
+          },
+          "draftPath": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Absolute path to the Stage 8 technical draft."
+          },
+          "draftHash": {
+            "$ref": "#/definitions/sha256",
+            "description": "SHA-256 hash of the technical draft."
+          },
+          "commands": {
+            "type": "array",
+            "description": "Ordered commands that must appear in sequence.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["order", "value"],
+              "properties": {
+                "order": {
+                  "type": "integer",
+                  "minimum": 0,
+                  "description": "Zero-based order index."
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The command text."
+                }
+              }
+            }
+          },
+          "environmentVariables": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Environment variable names that must be preserved."
+          },
+          "resourceNames": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Resource names that must be preserved."
+          },
+          "resourceBoundaries": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Resource boundary descriptions."
+          },
+          "authenticationBehaviors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Authentication behaviors that must be preserved."
+          },
+          "safetyGates": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Safety gate descriptions."
+          },
+          "cleanupBehaviors": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "Cleanup behavior descriptions."
+          },
+          "claims": {
+            "type": "array",
+            "description": "Protected technical claims.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["claimId", "text", "citations"],
+              "properties": {
+                "claimId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Unique claim identifier."
+                },
+                "text": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Claim text."
+                },
+                "citations": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions/citation"
+                  }
+                }
+              }
+            }
+          },
+          "citations": {
+            "type": "array",
+            "description": "All citations referenced in this article.",
+            "items": {
+              "$ref": "#/definitions/citation"
+            }
+          },
+          "languageFacts": {
+            "type": "array",
+            "description": "Language-specific facts.",
+            "items": {
+              "type": "string",
+              "minLength": 1
+            }
+          },
+          "protectedTokens": {
+            "type": "array",
+            "description": "Tokens whose values must survive editorial processing.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["tokenId", "value", "normalizationRule"],
+              "properties": {
+                "tokenId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Unique token identifier."
+                },
+                "value": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Exact token value."
+                },
+                "normalizationRule": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Normalization rule for post-editorial comparison."
+                }
+              }
+            }
+          },
+          "protectedLinks": {
+            "type": "array",
+            "description": "Links that must not be changed by editorial processing.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["label", "url"],
+              "properties": {
+                "label": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Link display label."
+                },
+                "url": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Link target URL."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

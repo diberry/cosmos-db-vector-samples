@@ -1,0 +1,430 @@
+{
+  "toolchain": [
+    {
+      "name": "go",
+      "purpose": "Go compiler and toolchain",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\README.md",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "README.md:Prerequisites",
+        "excerpt": "Go 1.23 or later"
+      }
+    }
+  ],
+  "runtime": {
+    "minimumVersion": "1.23.0",
+    "name": "Go",
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "go.mod:3",
+      "excerpt": "go 1.23.0"
+    }
+  },
+  "sdkReferenceLinks": [
+    {
+      "url": "https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos",
+      "surface": "data-plane",
+      "label": "azcosmos (Go SDK)"
+    },
+    {
+      "url": "https://pkg.go.dev/github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v3",
+      "surface": "control-plane",
+      "label": "armcosmos/v3 (Go SDK)"
+    }
+  ],
+  "dependencyInstallCommand": {
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\README.md",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "README.md:Setup step 3",
+      "excerpt": "go mod download"
+    },
+    "command": "go mod download"
+  },
+  "configurationTemplate": {
+    "loadingMechanism": "Process environment through os.Getenv; no automatic .env loading. User must manually export variables before running.",
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\.env.example",
+    "autoLoaded": false,
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "config.go:60",
+      "excerpt": "return os.Getenv(key)"
+    }
+  },
+  "dataPlaneModules": [
+    {
+      "responsibility": "Data-plane operations: document loading, Azure OpenAI embedding generation via REST API (no SDK), sequential document insertion via individual CreateItem calls, VectorDistance queries, field name validation",
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "dataplane.go:1-3",
+        "excerpt": "package main"
+      }
+    }
+  ],
+  "observedContractGaps": [
+    {
+      "constitutionLocator": "copilot-instructions.md:SDK Support Across Languages table",
+      "observation": "Go uses individual sequential CreateItem calls (maxInsertConcurrency=1) instead of TransactionalBatch + goroutines as recommended. The sample works correctly but does not follow the documented insertion pattern.",
+      "requirement": "Go should use TransactionalBatch + goroutines for document insertion per copilot-instructions.md SDK Support table",
+      "severity": "warning"
+    },
+    {
+      "constitutionLocator": "CREATE-INDEX-CONSTITUTION.md:section II.2",
+      "observation": "Go hardcodes the Azure OpenAI API version as 2024-02-01 and does not read AZURE_OPENAI_EMBEDDING_API_VERSION from the environment. Other languages default to 2024-08-01-preview and allow override.",
+      "requirement": "AZURE_OPENAI_EMBEDDING_API_VERSION should be configurable via environment variable",
+      "severity": "warning"
+    }
+  ],
+  "entryPoint": {
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\main.go",
+    "runCommand": "go run .",
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\README.md",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "README.md:Run the sample",
+      "excerpt": "go run ."
+    }
+  },
+  "environmentVariableMapping": [
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_COSMOSDB_ENDPOINT",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:76",
+        "excerpt": "CosmosEndpoint: trimEnvValue(getenv(\"AZURE_COSMOSDB_ENDPOINT\"))"
+      },
+      "configurationField": "CosmosEndpoint"
+    },
+    {
+      "defaultValue": "HotelsCreateIndex",
+      "required": true,
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:77",
+        "excerpt": "DatabaseName: trimEnvValue(getenv(\"AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME\"))"
+      },
+      "configurationField": "DatabaseName"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_OPENAI_EMBEDDING_ENDPOINT",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:80",
+        "excerpt": "OpenAIEmbeddingEndpoint: trimEnvValue(getenv(\"AZURE_OPENAI_EMBEDDING_ENDPOINT\"))"
+      },
+      "configurationField": "OpenAIEmbeddingEndpoint"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_OPENAI_EMBEDDING_DEPLOYMENT",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:81",
+        "excerpt": "OpenAIEmbeddingDeployment: trimEnvValue(getenv(\"AZURE_OPENAI_EMBEDDING_DEPLOYMENT\"))"
+      },
+      "configurationField": "OpenAIEmbeddingDeployment"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_SUBSCRIPTION_ID",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:89",
+        "excerpt": "SubscriptionID: trimEnvValue(getenv(\"AZURE_SUBSCRIPTION_ID\"))"
+      },
+      "configurationField": "SubscriptionID"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_RESOURCE_GROUP",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:90",
+        "excerpt": "ResourceGroup: trimEnvValue(getenv(\"AZURE_RESOURCE_GROUP\"))"
+      },
+      "configurationField": "ResourceGroup"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_LOCATION",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:92",
+        "excerpt": "Location: trimEnvValue(getenv(\"AZURE_LOCATION\"))"
+      },
+      "configurationField": "Location"
+    },
+    {
+      "defaultValue": null,
+      "required": true,
+      "name": "AZURE_COSMOSDB_ACCOUNT_NAME",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:91",
+        "excerpt": "AccountName: trimEnvValue(getenv(\"AZURE_COSMOSDB_ACCOUNT_NAME\"))"
+      },
+      "configurationField": "AccountName"
+    },
+    {
+      "defaultValue": "./data/HotelsData_toCosmosDB_Vector_byRegion.json",
+      "required": true,
+      "name": "DATA_FILE_WITH_VECTORS_AND_REGIONS",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:70",
+        "excerpt": "dataFile := trimEnvValue(getenv(\"DATA_FILE_WITH_VECTORS_AND_REGIONS\"))"
+      },
+      "configurationField": "DataFileWithVectors"
+    },
+    {
+      "defaultValue": "hotels_diskann",
+      "required": false,
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:62-64",
+        "excerpt": "diskANNContainerName := trimEnvValue(getenv(\"AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME\"))"
+      },
+      "configurationField": "DiskANNContainerName"
+    },
+    {
+      "defaultValue": "hotels_quantizedflat",
+      "required": false,
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:65-67",
+        "excerpt": "quantizedFlatContainerName := trimEnvValue(getenv(\"AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME\"))"
+      },
+      "configurationField": "QuantizedFlatContainerName"
+    },
+    {
+      "defaultValue": "false",
+      "required": false,
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:69",
+        "excerpt": "allowCustomDeletion, err := parseOptionalBool(\"AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS\", ...)"
+      },
+      "configurationField": "AllowDestructiveOperations"
+    },
+    {
+      "missing": true,
+      "defaultValue": "2024-02-01",
+      "configurationField": "OpenAIAPIVersion",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:14",
+        "excerpt": "azureOpenAIEmbeddingsAPIVersion = \"2024-02-01\""
+      },
+      "note": "Go does not read AZURE_OPENAI_EMBEDDING_API_VERSION from the environment. It uses a hardcoded constant azureOpenAIEmbeddingsAPIVersion = 2024-02-01",
+      "name": "AZURE_OPENAI_EMBEDDING_API_VERSION",
+      "required": false
+    }
+  ],
+  "snippets": [
+    {
+      "startLine": 56,
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+      "verbatimText": "\t\tfmt.Printf(\"  Index type:     %s\\n\", string(indexConfig.indexType))\n\t\tfmt.Printf(\"  Embedding path: %s\\n\", embeddingPath)\n\t\tfmt.Printf(\"  Dimensions:     %d\\n\", config.EmbeddingDimensions)\n\t\tfmt.Printf(\"  Distance func:  cosine (queried with all 3 metrics)\\n\")\n\n\t\t// Build container resource with vector embedding policy\n\t\tcontainerResource := &armcosmos.SQLContainerResource{\n\t\t\tID: ptr(indexConfig.containerName),\n\t\t\tPartitionKey: &armcosmos.ContainerPartitionKey{\n\t\t\t\tPaths: []*string{ptr(partitionKeyPath)},\n\t\t\t\tKind:  ptr(armcosmos.PartitionKindHash),\n\t\t\t},\n\t\t\tVectorEmbeddingPolicy: &armcosmos.VectorEmbeddingPolicy{\n\t\t\t\tVectorEmbeddings: []*armcosmos.VectorEmbedding{\n\t\t\t\t\t{\n\t\t\t\t\t\tPath:             ptr(embeddingPath),\n\t\t\t\t\t\tDataType:         ptr(armcosmos.VectorDataTypeFloat32),\n\t\t\t\t\t\tDimensions:       ptr(int32(config.EmbeddingDimensions)),\n\t\t\t\t\t\tDistanceFunction: ptr(armcosmos.DistanceFunctionCosine),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t\tIndexingPolicy: &armcosmos.IndexingPolicy{\n\t\t\t\tIndexingMode: ptr(armcosmos.IndexingModeConsistent),\n\t\t\t\tAutomatic:    ptr(true),\n\t\t\t\tIncludedPaths: []*armcosmos.IncludedPath{\n\t\t\t\t\t{Path: ptr(\"/*\")},\n\t\t\t\t},\n\t\t\t\tExcludedPaths: []*armcosmos.ExcludedPath{\n\t\t\t\t\t{Path: ptr(`/\"_etag\"/?`)},\n\t\t\t\t\t{Path: ptr(embeddingPath + \"/*\")},\n\t\t\t\t},\n\t\t\t\tVectorIndexes: []*armcosmos.VectorIndex{\n\t\t\t\t\t{\n\t\t\t\t\t\tPath: ptr(embeddingPath),\n\t\t\t\t\t\tType: ptr(indexConfig.indexType),\n\t\t\t\t\t},\n\t\t\t\t},\n\t\t\t},\n\t\t}\n\n\t\t// Delete existing container for idempotent re-runs\n\t\tfmt.Printf(\"  Pre-creation delete target: %s/%s/%s/%s\\n\", config.ResourceGroup, config.AccountName, config.DatabaseName, indexConfig.containerName)\n\t\tdeleteStart := time.Now()\n\t\tdeleteCtx, deleteCancel := context.WithTimeout(ctx, armDeleteTimeout)\n\t\tdeletePoller, err := client.BeginDeleteSQLContainer(\n\t\t\tdeleteCtx,\n\t\t\tconfig.ResourceGroup,\n\t\t\tconfig.AccountName,",
+      "id": "go-container-creation-with-vector-policy",
+      "endLine": 104,
+      "purpose": "container-creation-with-vector-policy",
+      "language": "go"
+    },
+    {
+      "startLine": 120,
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+      "verbatimText": "\t\t\t\t&runtime.PollUntilDoneOptions{Frequency: armPollFrequency},\n\t\t\t)\n\t\t\tdeleteCancel()\n\t\t\tif err != nil {\n\t\t\t\tif isNotFound(err) {\n\t\t\t\t\tfmt.Printf(\"  ✓ Pre-creation deletion completed in %.1fs; container no longer exists\\n\", time.Since(deleteStart).Seconds())\n\t\t\t\t} else {\n\t\t\t\t\treturn fmt.Errorf(\"failed to wait for pre-creation deletion of container %q: %w\", indexConfig.containerName, err)\n\t\t\t\t}\n\t\t\t} else {\n\t\t\t\tfmt.Printf(\"  ✓ Pre-creation deletion completed in %.1fs\\n\", time.Since(deleteStart).Seconds())\n\t\t\t}\n\t\t}\n\n\t\t// Create the container\n\t\tfmt.Printf(\"  Creating container with vector index...\\n\")\n\t\tstart := time.Now()\n\t\tcreateCtx, createCancel := context.WithTimeout(ctx, armCreateTimeout)\n\n\t\t// Note: Options is nil to support serverless accounts (which don't allow explicit throughput).\n\t\t// For provisioned accounts, you could set Options.Throughput or Options.AutoscaleSettings.\n\t\tcontainerPoller, err := client.BeginCreateUpdateSQLContainer(\n\t\t\tcreateCtx,\n\t\t\tconfig.ResourceGroup,\n\t\t\tconfig.AccountName,\n\t\t\tconfig.DatabaseName,\n\t\t\tindexConfig.containerName,\n\t\t\tarmcosmos.SQLContainerCreateUpdateParameters{\n\t\t\t\tLocation: ptr(config.Location),\n\t\t\t\tProperties: &armcosmos.SQLContainerCreateUpdateProperties{\n\t\t\t\t\tResource: containerResource,\n\t\t\t\t\tOptions:  nil, // nil = serverless compatible (no throughput setting)\n\t\t\t\t},\n\t\t\t},\n\t\t\tnil,\n\t\t)\n\t\tif err != nil {\n\t\t\tcreateCancel()",
+      "id": "go-container-verification-readback",
+      "endLine": 157,
+      "purpose": "container-verification-readback",
+      "language": "go"
+    },
+    {
+      "startLine": 17,
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\main.go",
+      "verbatimText": "\tif err != nil {\n\t\tlog.Fatalf(\"configuration error: %v\", err)\n\t}\n\n\tcredential, err := azidentity.NewDefaultAzureCredential(nil)\n\tif err != nil {\n\t\tlog.Fatalf(\"failed to create DefaultAzureCredential: %v\", err)\n\t}",
+      "id": "go-default-azure-credential-client-construction",
+      "endLine": 24,
+      "purpose": "default-azure-credential-client-construction",
+      "language": "go"
+    },
+    {
+      "startLine": 155,
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+      "verbatimText": "\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"create embeddings request: %w\", err)\n\t}\n\trequest.Header.Set(\"Authorization\", \"Bearer \"+token.Token)\n\trequest.Header.Set(\"Content-Type\", \"application/json\")\n\n\tresponse, err := httpClient.Do(request)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"call Azure OpenAI embeddings API: %w\", err)\n\t}\n\tdefer response.Body.Close()\n\n\tresponseBody, err := io.ReadAll(response.Body)\n\tif err != nil {\n\t\treturn nil, fmt.Errorf(\"read embeddings response: %w\", err)\n\t}\n\n\tif response.StatusCode < http.StatusOK || response.StatusCode >= http.StatusMultipleChoices {\n\t\treturn nil, fmt.Errorf(\"Azure OpenAI embeddings request failed: status=%d body=%s\", response.StatusCode, strings.TrimSpace(string(responseBody)))\n\t}\n\n\tvar payload embeddingsResponse\n\tif err := json.Unmarshal(responseBody, &payload); err != nil {\n\t\treturn nil, fmt.Errorf(\"parse embeddings response: %w\", err)\n\t}\n\tif payload.Error != nil {\n\t\treturn nil, fmt.Errorf(\"Azure OpenAI embeddings error: %s\", payload.Error.Message)\n\t}\n\tif len(payload.Data) == 0 {\n\t\treturn nil, errors.New(\"Azure OpenAI embeddings response did not include any vectors\")\n\t}\n\n\tembedding := make([]float32, len(payload.Data[0].Embedding))",
+      "id": "go-vector-distance-query-with-field-validation",
+      "endLine": 187,
+      "purpose": "vector-distance-query-with-field-validation",
+      "language": "go"
+    },
+    {
+      "startLine": 178,
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+      "verbatimText": "\t\t\tindexConfig.containerName,\n\t\t\tnil,\n\t\t)\n\t\treadCancel()\n\t\tif err != nil {\n\t\t\treturn fmt.Errorf(\"failed to verify container %s: %w\", indexConfig.containerName, err)\n\t\t}\n\n\t\tres := got.Properties.Resource\n\t\tif res == nil {\n\t\t\treturn fmt.Errorf(\"read-back resource for %s is nil\", indexConfig.containerName)\n\t\t}\n\n\t\t// Log verification\n\t\tif res.VectorEmbeddingPolicy != nil && len(res.VectorEmbeddingPolicy.VectorEmbeddings) > 0 {\n\t\t\temb := res.VectorEmbeddingPolicy.VectorEmbeddings[0]\n\t\t\tfmt.Printf(\"  ✓ Verified: Vector embedding policy configured\\n\")\n\t\t\tfmt.Printf(\"    - Path: %s\\n\", *emb.Path)\n\t\t\tfmt.Printf(\"    - DataType: %s\\n\", *emb.DataType)\n\t\t\tfmt.Printf(\"    - Dimensions: %d\\n\", *emb.Dimensions)\n\t\t\tfmt.Printf(\"    - DistanceFunction: %s\\n\", *emb.DistanceFunction)\n\t\t}\n\n\t\tif res.IndexingPolicy != nil && len(res.IndexingPolicy.VectorIndexes) > 0 {\n\t\t\tidx := res.IndexingPolicy.VectorIndexes[0]\n\t\t\tfmt.Printf(\"  ✓ Verified: Vector index configured\\n\")\n\t\t\tfmt.Printf(\"    - Path: %s\\n\", *idx.Path)\n\t\t\tfmt.Printf(\"    - Type: %s\\n\", *idx.Type)\n\t\t}\n\t}\n\n\tfmt.Printf(\"\\n✓ All containers created successfully\\n\")\n\treturn nil\n}\n\nfunc DeleteContainers(ctx context.Context, credential *azidentity.DefaultAzureCredential, cfg *Config) error {\n\tif err := validateContainerDeletionSafety(cfg); err != nil {\n\t\treturn fmt.Errorf(\"unsafe container deletion configuration: %w\", err)\n\t}\n\n\tclient, err := armcosmos.NewSQLResourcesClient(cfg.SubscriptionID, credential, nil)\n\tif err != nil {\n\t\treturn fmt.Errorf(\"failed to create SQL resources client: %w\", err)\n\t}\n\n\tfor _, containerName := range []string{cfg.DiskANNContainerName, cfg.QuantizedFlatContainerName} {\n\t\tfmt.Printf(\"  Delete target: %s/%s/%s/%s\\n\", cfg.ResourceGroup, cfg.AccountName, cfg.DatabaseName, containerName)\n\t\tstart := time.Now()\n\t\tdeleteCtx, cancel := context.WithTimeout(ctx, armDeleteTimeout)\n\n\t\tpoller, err := client.BeginDeleteSQLContainer(\n\t\t\tdeleteCtx,\n\t\t\tcfg.ResourceGroup,",
+      "id": "go-guarded-container-deletion",
+      "endLine": 230,
+      "purpose": "guarded-container-deletion",
+      "language": "go"
+    }
+  ],
+  "dependencyManifest": {
+    "declaredPackages": [
+      {
+        "version": "v1.20.0",
+        "citation": {
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "locator": "go.mod:6",
+          "excerpt": "github.com/Azure/azure-sdk-for-go/sdk/azcore v1.20.0"
+        },
+        "name": "github.com/Azure/azure-sdk-for-go/sdk/azcore",
+        "surface": "other"
+      },
+      {
+        "version": "v1.13.1",
+        "citation": {
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "locator": "go.mod:7",
+          "excerpt": "github.com/Azure/azure-sdk-for-go/sdk/azidentity v1.13.1"
+        },
+        "name": "github.com/Azure/azure-sdk-for-go/sdk/azidentity",
+        "surface": "other"
+      },
+      {
+        "version": "v1.4.2",
+        "citation": {
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "locator": "go.mod:8",
+          "excerpt": "github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos v1.4.2"
+        },
+        "name": "github.com/Azure/azure-sdk-for-go/sdk/data/azcosmos",
+        "surface": "data-plane"
+      },
+      {
+        "version": "v3.4.0",
+        "citation": {
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "locator": "go.mod:9",
+          "excerpt": "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v3 v3.4.0"
+        },
+        "name": "github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/cosmos/armcosmos/v3",
+        "surface": "control-plane"
+      }
+    ],
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\go.mod"
+  },
+  "language": "go",
+  "sampleRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+  "languageDifferences": [
+    {
+      "concept": "Insertion strategy",
+      "difference": "Go lacks native bulk and uses individual CreateItem calls (maxInsertConcurrency=1). The copilot-instructions.md recommends TransactionalBatch + goroutines but the actual code uses sequential CreateItem.",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "dataplane.go:109,124",
+        "excerpt": "const maxInsertConcurrency = 1 ... response, err := container.CreateItem(ctx, partitionKey, body, nil)"
+      },
+      "requiredBySdk": true
+    },
+    {
+      "concept": "Azure OpenAI integration",
+      "difference": "Go uses direct REST HTTP calls to the Azure OpenAI embeddings endpoint with bearer token authentication instead of an OpenAI SDK package.",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "dataplane.go:62-100",
+        "excerpt": "func GenerateEmbedding(...) ... request.Header.Set(\"Authorization\", \"Bearer \"+token.Token)"
+      },
+      "requiredBySdk": true
+    },
+    {
+      "concept": "Embedding API version",
+      "difference": "Go hardcodes Azure OpenAI API version as 2024-02-01 and does not read AZURE_OPENAI_EMBEDDING_API_VERSION from the environment, unlike Python/TypeScript/Java/.NET which use 2024-08-01-preview.",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\config.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "config.go:14",
+        "excerpt": "azureOpenAIEmbeddingsAPIVersion = \"2024-02-01\""
+      },
+      "requiredBySdk": false
+    },
+    {
+      "concept": "Container verification",
+      "difference": "Go performs a full read-back verification of the created container, checking vector embedding policy and indexing policy. Python does not perform this verification.",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "controlplane.go:120-157",
+        "excerpt": "got, err := client.GetSQLContainer(readCtx, ...)"
+      },
+      "requiredBySdk": false
+    }
+  ],
+  "controlPlaneModules": [
+    {
+      "responsibility": "ARM SDK operations: create and delete SQL containers with vector indexes using armcosmos.SQLResourcesClient. Includes explicit polling intervals, cancellation timeouts, and container verification read-back.",
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+      "citation": {
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\controlplane.go",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "locator": "controlplane.go:30-34",
+        "excerpt": "CreateContainersWithVectorIndexes creates SQL containers with vector indexes using the ARM SDK"
+      }
+    }
+  ],
+  "insertionStrategy": {
+    "approach": "Individual sequential CreateItem calls per document with goroutine-based parallelism (maxInsertConcurrency=1, effectively sequential). Each document inserted with partition key set to its Region value.",
+    "sdkConstraint": "Go azcosmos SDK lacks native bulk execution. The copilot-instructions.md recommends TransactionalBatch + goroutines but the actual implementation uses individual CreateItem calls.",
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\dataplane.go",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "dataplane.go:124-125",
+      "excerpt": "response, err := container.CreateItem(ctx, partitionKey, body, nil)"
+    }
+  },
+  "schemaVersion": 1,
+  "validationCommand": {
+    "sharedValidatorInvocation": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language Go",
+    "languageSpecific": "go test ./...",
+    "citation": {
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go\\README.md",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "locator": "README.md:Validate",
+      "excerpt": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language Go"
+    }
+  },
+  "sampleDirectory": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-go"
+}

@@ -1,0 +1,140 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Editorial output selection",
+  "description": "Stage 10 editorial-output-selection artifact (10-editorial-output-selection.json). Identifies exactly one downstream candidate set by artifact path and hash, selected from the Mosaic revised, equivalent-gate revised, or Stage 9 draft root.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "editorialPath",
+    "gateType",
+    "selectedCandidateRoot",
+    "publicationCapable",
+    "candidates",
+    "stage9DraftHashes",
+    "selectionRationale"
+  ],
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hash in lowercase hex."
+    },
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "editorialPath": {
+      "type": "string",
+      "enum": ["mosaic", "approved-equivalent", "draft-only"],
+      "description": "The editorial path used in this run."
+    },
+    "gateType": {
+      "type": "string",
+      "enum": ["mosaic", "approved-equivalent", "draft-only"],
+      "description": "The gate type that produced the selected candidates."
+    },
+    "selectedCandidateRoot": {
+      "$ref": "#/definitions/absolutePath",
+      "description": "Absolute path to the selected candidate root directory. Must be one of: 10-mosaic/revised, 10-equivalent-gate/revised, or the Stage 9 draft root."
+    },
+    "publicationCapable": {
+      "type": "boolean",
+      "description": "Whether the selected candidates are publication-capable. Must be false when gateType is draft-only."
+    },
+    "candidates": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Selected candidate files with hashes.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["articleId", "language", "path", "sha256"],
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Article identifier."
+          },
+          "language": {
+            "$ref": "#/definitions/language"
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Path to the candidate file."
+          },
+          "sha256": {
+            "$ref": "#/definitions/sha256"
+          }
+        }
+      }
+    },
+    "stage9DraftHashes": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Stage 9 draft hashes for comparison. When gateType is draft-only, each candidate hash must match the corresponding stage9 hash (enforced by script logic).",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["articleId", "path", "sha256"],
+        "properties": {
+          "articleId": {
+            "type": "string",
+            "minLength": 1
+          },
+          "path": {
+            "type": "string",
+            "minLength": 1
+          },
+          "sha256": {
+            "$ref": "#/definitions/sha256"
+          }
+        }
+      }
+    },
+    "selectionRationale": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Rationale for the candidate selection."
+    }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "gateType": { "const": "draft-only" }
+        },
+        "required": ["gateType"]
+      },
+      "then": {
+        "properties": {
+          "publicationCapable": {
+            "const": false,
+            "description": "Draft-only runs are never publication-capable."
+          }
+        }
+      }
+    }
+  ]
+}

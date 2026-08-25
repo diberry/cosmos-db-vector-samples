@@ -1,0 +1,139 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Authority manifest",
+  "description": "Stage 2 authority-manifest artifact (02-authority-manifest.json). Compiles every requirement from constitutions, sample evidence, lifecycle skills, and publication context with source locations, ownership, and conflict tracking.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "requirements",
+    "conflicts"
+  ],
+  "definitions": {
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "requirements": {
+      "type": "array",
+      "description": "All compiled requirements with source traceability.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "authorityRank",
+          "sourcePath",
+          "sourceRevision",
+          "locator",
+          "requirementText",
+          "ownership",
+          "category",
+          "appliesToLanguages"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique requirement identifier."
+          },
+          "authorityRank": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 6,
+            "description": "Authority rank per the plan's review-authority order (1=base constitution, 6=existing article text)."
+          },
+          "sourcePath": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Absolute path to the source file containing this requirement."
+          },
+          "sourceRevision": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Commit SHA or version of the source file."
+          },
+          "locator": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Heading, section, or line anchor within the source file."
+          },
+          "requirementText": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The verbatim or summarized requirement text."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["technical", "editorial-publication"],
+            "description": "Whether this requirement is owned by the technical layers or by the editorial gate."
+          },
+          "category": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Requirement category (e.g. authentication, configuration, lifecycle, safety)."
+          },
+          "appliesToLanguages": {
+            "type": "array",
+            "items": {
+              "$ref": "#/definitions/language"
+            },
+            "description": "Languages this requirement applies to; empty array means all languages."
+          }
+        }
+      }
+    },
+    "conflicts": {
+      "type": "array",
+      "description": "Detected conflicts between requirements. Any blocking conflict stops the run.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "requirementIds",
+          "description",
+          "blocking"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique conflict identifier."
+          },
+          "requirementIds": {
+            "type": "array",
+            "minItems": 2,
+            "items": {
+              "type": "string",
+              "minLength": 1
+            },
+            "description": "IDs of the conflicting requirements."
+          },
+          "description": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Description of the conflict."
+          },
+          "blocking": {
+            "const": true,
+            "description": "All conflicts are blocking; they stop the run."
+          }
+        }
+      }
+    }
+  }
+}

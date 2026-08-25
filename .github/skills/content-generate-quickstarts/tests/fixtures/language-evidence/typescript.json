@@ -1,0 +1,408 @@
+{
+  "insertionStrategy": {
+    "citation": {
+      "excerpt": "const response = await container.items.executeBulkOperations(operations);",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+      "locator": "data-plane.ts:149-157"
+    },
+    "approach": "Native bulk via container.items.executeBulkOperations(operations). Documents grouped by Region, bulk operations created with BulkOperationType.Create per region batch.",
+    "sdkConstraint": "TypeScript @azure/cosmos v4+ supports native bulk execution. No pre-batching required. SDK handles internal batching, dispatch, and throttling."
+  },
+  "runtime": {
+    "citation": {
+      "excerpt": "\"node\": \">=20.0.0\"",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+      "locator": "package.json:engines"
+    },
+    "name": "Node.js",
+    "minimumVersion": "20.0.0"
+  },
+  "environmentVariableMapping": [
+    {
+      "citation": {
+        "excerpt": "endpoint: clean(env.AZURE_COSMOSDB_ENDPOINT)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:50"
+      },
+      "name": "AZURE_COSMOSDB_ENDPOINT",
+      "defaultValue": null,
+      "configurationField": "cosmos.endpoint",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "databaseName: clean(env.AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME) || \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:52"
+      },
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME",
+      "defaultValue": null,
+      "configurationField": "cosmos.databaseName",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "endpoint: clean(env.AZURE_OPENAI_EMBEDDING_ENDPOINT) || clean(env.AZURE_OPENAI_ENDPOINT)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:58-59"
+      },
+      "name": "AZURE_OPENAI_EMBEDDING_ENDPOINT",
+      "defaultValue": null,
+      "configurationField": "openai.endpoint",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "embeddingDeployment: clean(env.AZURE_OPENAI_EMBEDDING_DEPLOYMENT) || \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:61"
+      },
+      "name": "AZURE_OPENAI_EMBEDDING_DEPLOYMENT",
+      "defaultValue": null,
+      "configurationField": "openai.embeddingDeployment",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "subscriptionId: clean(env.AZURE_SUBSCRIPTION_ID)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:46"
+      },
+      "name": "AZURE_SUBSCRIPTION_ID",
+      "defaultValue": null,
+      "configurationField": "azure.subscriptionId",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "resourceGroup: clean(env.AZURE_RESOURCE_GROUP)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:47"
+      },
+      "name": "AZURE_RESOURCE_GROUP",
+      "defaultValue": null,
+      "configurationField": "azure.resourceGroup",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "location: clean(env.AZURE_LOCATION) || \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:48"
+      },
+      "name": "AZURE_LOCATION",
+      "defaultValue": null,
+      "configurationField": "azure.location",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "accountName: clean(env.AZURE_COSMOSDB_ACCOUNT_NAME)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:49"
+      },
+      "name": "AZURE_COSMOSDB_ACCOUNT_NAME",
+      "defaultValue": null,
+      "configurationField": "cosmos.accountName",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "dataFile: clean(env.DATA_FILE_WITH_VECTORS_AND_REGIONS) || \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:70-71"
+      },
+      "name": "DATA_FILE_WITH_VECTORS_AND_REGIONS",
+      "defaultValue": null,
+      "configurationField": "dataFile",
+      "required": true
+    },
+    {
+      "citation": {
+        "excerpt": "clean(env.AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME) || \"hotels_diskann\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:39-40"
+      },
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME",
+      "defaultValue": "hotels_diskann",
+      "configurationField": "cosmos.diskannContainerName",
+      "required": false
+    },
+    {
+      "citation": {
+        "excerpt": "clean(env.AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME) || \"hotels_quantizedflat\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:42-43"
+      },
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME",
+      "defaultValue": "hotels_quantizedflat",
+      "configurationField": "cosmos.quantizedflatContainerName",
+      "required": false
+    },
+    {
+      "citation": {
+        "excerpt": "allowDestructiveOperations: clean(env.AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS)?.toLowerCase() === \"true\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:74-76"
+      },
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS",
+      "defaultValue": "false",
+      "configurationField": "allowDestructiveOperations",
+      "required": false
+    },
+    {
+      "citation": {
+        "excerpt": "embeddingApiVersion: clean(env.AZURE_OPENAI_EMBEDDING_API_VERSION) || \"2024-08-01-preview\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\config.ts",
+        "locator": "config.ts:63"
+      },
+      "name": "AZURE_OPENAI_EMBEDDING_API_VERSION",
+      "defaultValue": "2024-08-01-preview",
+      "configurationField": "openai.embeddingApiVersion",
+      "required": false
+    }
+  ],
+  "languageDifferences": [
+    {
+      "citation": {
+        "excerpt": "const response = await container.items.executeBulkOperations(operations);",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+        "locator": "data-plane.ts:149"
+      },
+      "difference": "TypeScript has native bulk support via executeBulkOperations (v4.3+). SDK handles internal batching, dispatch, and throttling. No pre-batching required.",
+      "requiredBySdk": true,
+      "concept": "Insertion strategy"
+    },
+    {
+      "citation": {
+        "excerpt": "\"start\": \"tsc && node --env-file .env dist/index.js\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+        "locator": "package.json:scripts"
+      },
+      "difference": "TypeScript uses Node.js native --env-file flag to auto-load .env files at startup, unlike Python which requires manual export.",
+      "requiredBySdk": true,
+      "concept": "Configuration loading"
+    }
+  ],
+  "snippets": [
+    {
+      "language": "typescript",
+      "endLine": 117,
+      "startLine": 69,
+      "purpose": "container-creation-with-vector-policy",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\control-plane.ts",
+      "verbatimText": "  for (const indexConfig of indexTypes) {\n    console.log(\"\\n=== Step 1: Create Container with Vector Index ===\");\n    console.log(`  Container:      ${indexConfig.containerName}`);\n    console.log(`  Index type:     ${indexConfig.type}`);\n    console.log(`  Dimensions:     ${config.expectedDimensions}`);\n    console.log(`  Distance func:  cosine (queried with all 3 metrics)`);\n\n    // Delete existing container to ensure clean state (idempotent)\n    await deleteContainerIfExists(armClient, config, indexConfig.containerName);\n\n    const start = Date.now();\n    await armClient.sqlResources.beginCreateUpdateSqlContainerAndWait(\n      config.azure.resourceGroup!,\n      config.cosmos.accountName!,\n      config.cosmos.databaseName,\n      indexConfig.containerName,\n      {\n        resource: {\n          id: indexConfig.containerName,\n          partitionKey: {\n            paths: [\"/Region\"],\n            kind: \"MultiHash\",\n            version: 2,\n          },\n          indexingPolicy: {\n            indexingMode: \"consistent\",\n            automatic: true,\n            includedPaths: [{ path: \"/*\" }],\n            excludedPaths: [{ path: \"/_etag/?\" }, { path: `${embeddingPath}/*` }],\n            vectorIndexes: [\n              {\n                path: embeddingPath,\n                type: indexConfig.type,\n              },\n            ],\n          },\n          vectorEmbeddingPolicy: {\n            vectorEmbeddings: [\n              {\n                path: embeddingPath,\n                dataType: \"float32\",\n                dimensions: config.expectedDimensions,\n                distanceFunction: \"cosine\",\n              },\n            ],\n          },\n        },\n        location: config.azure.location,\n      }",
+      "id": "typescript-container-creation-with-vector-policy"
+    },
+    {
+      "language": "typescript",
+      "endLine": 42,
+      "startLine": 25,
+      "purpose": "default-azure-credential-client-construction",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+      "verbatimText": "\n/** Create a Cosmos DB data-plane client. */\nexport function createCosmosClient(\n  credential: TokenCredential,\n  endpoint: string\n) {\n  return new CosmosClient({\n    endpoint,\n    aadCredentials: credential,\n  });\n}\n\n/** Create an Azure OpenAI client for embedding generation. */\nexport function createOpenAIClient(\n  credential: TokenCredential,\n  config: SampleConfig\n) {\n  const tokenProvider = getBearerTokenProvider(",
+      "id": "typescript-default-azure-credential-client-construction"
+    },
+    {
+      "language": "typescript",
+      "endLine": 243,
+      "startLine": 213,
+      "purpose": "vector-distance-query-with-field-validation",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+      "verbatimText": "            failed++;\n            const docId = (result as any).resourceBody?.id || \"unknown\";\n            errors.push({\n              doc: docId,\n              error: result.error.message || \"Unknown error\",\n              statusCode: statusCode as number | undefined,\n            });\n          } else {\n            inserted++;\n          }\n          totalRU += ru;\n        }\n      }\n    } catch (error) {\n      failed += regionDocs.length;\n      errors.push({\n        doc: `Region: ${region} (${regionDocs.length} docs)`,\n        error: (error as Error).message || \"Batch operation failed\",\n      });\n    }\n  }\n\n  if (errors.length > 0) {\n    console.error(`  ✗ Errors during ingestion:`);\n    for (const err of errors.slice(0, 5)) {\n      console.error(`    - ${err.doc}: ${err.error}${err.statusCode ? ` (${err.statusCode})` : \"\"}`);\n    }\n    if (errors.length > 5) {\n      console.error(`    ... and ${errors.length - 5} more errors`);\n    }\n  }",
+      "id": "typescript-vector-distance-query-with-field-validation"
+    },
+    {
+      "language": "typescript",
+      "endLine": 152,
+      "startLine": 126,
+      "purpose": "guarded-container-deletion",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\control-plane.ts",
+      "verbatimText": "}\n\n// ---------------------------------------------------------------------------\n// Step 6 — Clean up sample-created containers (not azd infra)\n// ---------------------------------------------------------------------------\nexport async function cleanupSampleContainers(\n  armClient: CosmosDBManagementClient,\n  config: SampleConfig\n) {\n  validateContainerDeletionTargets(config);\n  const containerNames = [\n    config.cosmos.diskannContainerName,\n    config.cosmos.quantizedflatContainerName,\n  ];\n\n  console.log(\"\\n=== Cleanup: Remove Sample Containers ===\");\n  for (const containerName of containerNames) {\n    try {\n      await armClient.sqlResources.beginDeleteSqlContainerAndWait(\n        config.azure.resourceGroup!,\n        config.cosmos.accountName!,\n        config.cosmos.databaseName,\n        containerName\n      );\n      console.log(`  ✓ Deleted container: ${containerName}`);\n    } catch (error) {\n      if ((error as any).code === 404 || (error as any).message?.includes(\"NotFound\")) {",
+      "id": "typescript-guarded-container-deletion"
+    },
+    {
+      "language": "typescript",
+      "endLine": 210,
+      "startLine": 205,
+      "purpose": "field-name-validation",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+      "verbatimText": "\n          if (statusCode && Number(statusCode) >= 200 && Number(statusCode) < 300) {\n            inserted++;\n          } else if (Number(statusCode) === 409) {\n            // 409 Conflict: document already exists\n            conflict++;",
+      "id": "typescript-field-name-validation"
+    }
+  ],
+  "observedContractGaps": [],
+  "language": "typescript",
+  "configurationTemplate": {
+    "citation": {
+      "excerpt": "\"start\": \"tsc && node --env-file .env dist/index.js\"",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+      "locator": "package.json:scripts"
+    },
+    "autoLoaded": true,
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\.env.example",
+    "loadingMechanism": "Node.js native --env-file .env flag loads .env file at startup. The npm start script uses: tsc && node --env-file .env dist/index.js"
+  },
+  "dependencyManifest": {
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+    "declaredPackages": [
+      {
+        "citation": {
+          "excerpt": "\"@azure/arm-cosmosdb\": \"^16.2.0\"",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+          "locator": "package.json:dependencies"
+        },
+        "name": "@azure/arm-cosmosdb",
+        "version": "^16.2.0",
+        "surface": "control-plane"
+      },
+      {
+        "citation": {
+          "excerpt": "\"@azure/cosmos\": \"^4.0.0\"",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+          "locator": "package.json:dependencies"
+        },
+        "name": "@azure/cosmos",
+        "version": "^4.0.0",
+        "surface": "data-plane"
+      },
+      {
+        "citation": {
+          "excerpt": "\"@azure/identity\": \"^4.11.1\"",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+          "locator": "package.json:dependencies"
+        },
+        "name": "@azure/identity",
+        "version": "^4.11.1",
+        "surface": "other"
+      },
+      {
+        "citation": {
+          "excerpt": "\"openai\": \"^5.20.1\"",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+          "locator": "package.json:dependencies"
+        },
+        "name": "openai",
+        "version": "^5.20.1",
+        "surface": "embedding"
+      }
+    ]
+  },
+  "dataPlaneModules": [
+    {
+      "responsibility": "Data-plane operations: Cosmos DB client creation, Azure OpenAI client creation, document ingestion via executeBulkOperations, VectorDistance queries, field validation",
+      "citation": {
+        "excerpt": "Data-plane operations using @azure/cosmos and Azure OpenAI.",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts",
+        "locator": "data-plane.ts:1-5"
+      },
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\data-plane.ts"
+    }
+  ],
+  "validationCommand": {
+    "citation": {
+      "excerpt": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language TypeScript",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\README.md",
+      "locator": "README.md:Validate"
+    },
+    "sharedValidatorInvocation": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language TypeScript",
+    "languageSpecific": "vitest run"
+  },
+  "dependencyInstallCommand": {
+    "command": "npm install",
+    "citation": {
+      "excerpt": "\"start\": \"tsc && node --env-file .env dist/index.js\"",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+      "locator": "package.json:scripts"
+    }
+  },
+  "sampleRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+  "controlPlaneModules": [
+    {
+      "responsibility": "ARM SDK operations: create and delete SQL containers with vector indexes using @azure/arm-cosmosdb CosmosDBManagementClient",
+      "citation": {
+        "excerpt": "Control-plane operations using @azure/arm-cosmosdb (ARM SDK).",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\control-plane.ts",
+        "locator": "control-plane.ts:1-3"
+      },
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\control-plane.ts"
+    }
+  ],
+  "schemaVersion": 1,
+  "sampleDirectory": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript",
+  "sdkReferenceLinks": [
+    {
+      "label": "@azure/cosmos (npm)",
+      "surface": "data-plane",
+      "url": "https://www.npmjs.com/package/@azure/cosmos"
+    },
+    {
+      "label": "@azure/arm-cosmosdb (npm)",
+      "surface": "control-plane",
+      "url": "https://www.npmjs.com/package/@azure/arm-cosmosdb"
+    },
+    {
+      "label": "openai (npm)",
+      "surface": "embedding",
+      "url": "https://www.npmjs.com/package/openai"
+    }
+  ],
+  "entryPoint": {
+    "citation": {
+      "excerpt": "\"start\": \"tsc && node --env-file .env dist/index.js\"",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+      "locator": "package.json:scripts"
+    },
+    "runCommand": "npm start",
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\src\\index.ts"
+  },
+  "toolchain": [
+    {
+      "citation": {
+        "excerpt": "npm install",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\README.md",
+        "locator": "README.md:Setup"
+      },
+      "name": "npm",
+      "purpose": "Node.js package manager"
+    },
+    {
+      "citation": {
+        "excerpt": "\"typescript\": \"^5.9.2\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-typescript\\package.json",
+        "locator": "package.json:devDependencies"
+      },
+      "name": "typescript",
+      "purpose": "TypeScript compiler (tsc)"
+    }
+  ]
+}

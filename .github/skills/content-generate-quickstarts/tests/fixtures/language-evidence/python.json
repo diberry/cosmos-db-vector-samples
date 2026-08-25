@@ -1,0 +1,416 @@
+{
+  "dependencyInstallCommand": {
+    "command": "pip install -r requirements.txt",
+    "citation": {
+      "excerpt": "pip install -r requirements.txt",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\README.md",
+      "locator": "README.md:Setup step 2"
+    }
+  },
+  "schemaVersion": 1,
+  "environmentVariableMapping": [
+    {
+      "configurationField": "cosmos_endpoint",
+      "defaultValue": null,
+      "name": "AZURE_COSMOSDB_ENDPOINT",
+      "required": true,
+      "citation": {
+        "excerpt": "cosmos_endpoint=_clean(environment.get(\"AZURE_COSMOSDB_ENDPOINT\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:93"
+      }
+    },
+    {
+      "configurationField": "database_name",
+      "defaultValue": null,
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME",
+      "required": true,
+      "citation": {
+        "excerpt": "database_name=_clean(environment.get(\"AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:94"
+      }
+    },
+    {
+      "configurationField": "openai_embedding_endpoint",
+      "defaultValue": null,
+      "name": "AZURE_OPENAI_EMBEDDING_ENDPOINT",
+      "required": true,
+      "citation": {
+        "excerpt": "openai_embedding_endpoint=_clean(environment.get(\"AZURE_OPENAI_EMBEDDING_ENDPOINT\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:96"
+      }
+    },
+    {
+      "configurationField": "openai_embedding_deployment",
+      "defaultValue": null,
+      "name": "AZURE_OPENAI_EMBEDDING_DEPLOYMENT",
+      "required": true,
+      "citation": {
+        "excerpt": "openai_embedding_deployment=_clean(environment.get(\"AZURE_OPENAI_EMBEDDING_DEPLOYMENT\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:97"
+      }
+    },
+    {
+      "configurationField": "subscription_id",
+      "defaultValue": null,
+      "name": "AZURE_SUBSCRIPTION_ID",
+      "required": true,
+      "citation": {
+        "excerpt": "subscription_id=_clean(environment.get(\"AZURE_SUBSCRIPTION_ID\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:105"
+      }
+    },
+    {
+      "configurationField": "resource_group",
+      "defaultValue": null,
+      "name": "AZURE_RESOURCE_GROUP",
+      "required": true,
+      "citation": {
+        "excerpt": "resource_group=_clean(environment.get(\"AZURE_RESOURCE_GROUP\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:106"
+      }
+    },
+    {
+      "configurationField": "location",
+      "defaultValue": null,
+      "name": "AZURE_LOCATION",
+      "required": true,
+      "citation": {
+        "excerpt": "location=_clean(environment.get(\"AZURE_LOCATION\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:108"
+      }
+    },
+    {
+      "configurationField": "account_name",
+      "defaultValue": null,
+      "name": "AZURE_COSMOSDB_ACCOUNT_NAME",
+      "required": true,
+      "citation": {
+        "excerpt": "account_name=_clean(environment.get(\"AZURE_COSMOSDB_ACCOUNT_NAME\")) or \"\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:107"
+      }
+    },
+    {
+      "configurationField": "data_file_with_vectors",
+      "defaultValue": "./data/HotelsData_toCosmosDB_Vector_byRegion.json",
+      "name": "DATA_FILE_WITH_VECTORS_AND_REGIONS",
+      "required": true,
+      "citation": {
+        "excerpt": "data_file_value = _clean(environment.get(\"DATA_FILE_WITH_VECTORS_AND_REGIONS\"))",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:88-89"
+      }
+    },
+    {
+      "configurationField": "diskann_container_name",
+      "defaultValue": "hotels_diskann",
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME",
+      "required": false,
+      "citation": {
+        "excerpt": "diskann_container_name=_container_name(environment, \"AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME\", ...)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:109-112"
+      }
+    },
+    {
+      "configurationField": "quantizedflat_container_name",
+      "defaultValue": "hotels_quantizedflat",
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME",
+      "required": false,
+      "citation": {
+        "excerpt": "quantizedflat_container_name=_container_name(environment, \"AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME\", ...)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:113-116"
+      }
+    },
+    {
+      "configurationField": "allow_destructive_operations",
+      "defaultValue": "false",
+      "name": "AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS",
+      "required": false,
+      "citation": {
+        "excerpt": "allow_destructive_operations=...(_clean(environment.get(\"AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS\")) or \"\").lower() == \"true\"",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:117-120"
+      }
+    },
+    {
+      "configurationField": "openai_embedding_api_version",
+      "defaultValue": "2024-08-01-preview",
+      "name": "AZURE_OPENAI_EMBEDDING_API_VERSION",
+      "required": false,
+      "citation": {
+        "excerpt": "_clean(environment.get(\"AZURE_OPENAI_EMBEDDING_API_VERSION\")) or DEFAULT_EMBEDDING_API_VERSION",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+        "locator": "config.py:99-101"
+      }
+    }
+  ],
+  "languageDifferences": [
+    {
+      "difference": "Python lacks native bulk execution. Uses TransactionalBatch via execute_item_batch (max 100 ops, single partition). Documents grouped by Region partition key before insertion.",
+      "requiredBySdk": true,
+      "concept": "Insertion strategy",
+      "citation": {
+        "excerpt": "operations = [(\"upsert\", (document,)) for document in region_docs]; results = container.execute_item_batch(...",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+        "locator": "data_plane.py:127-133"
+      }
+    },
+    {
+      "difference": "Python must use SqlContainerResource and SqlContainerCreateUpdateParameters typed models per constitution section 3.4. Raw dictionary payloads are prohibited.",
+      "requiredBySdk": true,
+      "concept": "Control-plane typed models",
+      "citation": {
+        "excerpt": "resource = SqlContainerResource(id=container_name, ...); return SqlContainerCreateUpdateParameters(resource=resource, location=location,)",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\control_plane.py",
+        "locator": "control_plane.py:37-65"
+      }
+    },
+    {
+      "difference": "Python uses the openai package with AzureOpenAI class and get_bearer_token_provider for DefaultAzureCredential integration.",
+      "requiredBySdk": true,
+      "concept": "OpenAI SDK",
+      "citation": {
+        "excerpt": "token_provider = get_bearer_token_provider(credential, ...); return AzureOpenAI(...",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+        "locator": "data_plane.py:51-57"
+      }
+    }
+  ],
+  "dependencyManifest": {
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\requirements.txt",
+    "declaredPackages": [
+      {
+        "surface": "data-plane",
+        "version": ">=4.7.0",
+        "name": "azure-cosmos",
+        "citation": {
+          "excerpt": "azure-cosmos>=4.7.0",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\requirements.txt",
+          "locator": "requirements.txt:1"
+        }
+      },
+      {
+        "surface": "other",
+        "version": ">=1.18.0",
+        "name": "azure-identity",
+        "citation": {
+          "excerpt": "azure-identity>=1.18.0",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\requirements.txt",
+          "locator": "requirements.txt:2"
+        }
+      },
+      {
+        "surface": "control-plane",
+        "version": ">=10.0.0",
+        "name": "azure-mgmt-cosmosdb",
+        "citation": {
+          "excerpt": "azure-mgmt-cosmosdb>=10.0.0",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\requirements.txt",
+          "locator": "requirements.txt:3"
+        }
+      },
+      {
+        "surface": "embedding",
+        "version": ">=1.57.0",
+        "name": "openai",
+        "citation": {
+          "excerpt": "openai>=1.57.0",
+          "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+          "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\requirements.txt",
+          "locator": "requirements.txt:4"
+        }
+      }
+    ]
+  },
+  "toolchain": [
+    {
+      "name": "pip",
+      "purpose": "Python package installer",
+      "citation": {
+        "excerpt": "pip install -r requirements.txt",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\README.md",
+        "locator": "README.md:Setup step 2"
+      }
+    }
+  ],
+  "validationCommand": {
+    "citation": {
+      "excerpt": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language Python",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\README.md",
+      "locator": "README.md:Validate"
+    },
+    "sharedValidatorInvocation": "pwsh -NoProfile -File .github\\skills\\sample-validate-nosql-create-index\\scripts\\validate-create-index-samples.ps1 -Language Python",
+    "languageSpecific": "python -m pytest tests/"
+  },
+  "runtime": {
+    "minimumVersion": "3.9",
+    "name": "Python",
+    "citation": {
+      "excerpt": "Python 3.9+",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\README.md",
+      "locator": "README.md:Prerequisites"
+    }
+  },
+  "entryPoint": {
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\index.py",
+    "citation": {
+      "excerpt": "python -m src.index",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\README.md",
+      "locator": "README.md:Run"
+    },
+    "runCommand": "python -m src.index"
+  },
+  "observedContractGaps": [
+    {
+      "severity": "warning",
+      "constitutionLocator": "CREATE-INDEX-CONSTITUTION.md:section III.1 step 4",
+      "requirement": "Python control_plane.py does not verify the created container's vector embedding policy and indexing policy after creation (no read-back verification step)",
+      "observation": "After calling begin_create_update_sql_container().result(), the code only prints a hardcoded message. It does not read back the container to verify the vector embedding policy and indexing policy are correctly configured."
+    }
+  ],
+  "sdkReferenceLinks": [
+    {
+      "surface": "data-plane",
+      "url": "https://pypi.org/project/azure-cosmos/",
+      "label": "azure-cosmos (PyPI)"
+    },
+    {
+      "surface": "control-plane",
+      "url": "https://pypi.org/project/azure-mgmt-cosmosdb/",
+      "label": "azure-mgmt-cosmosdb (PyPI)"
+    },
+    {
+      "surface": "embedding",
+      "url": "https://pypi.org/project/openai/",
+      "label": "openai (PyPI)"
+    }
+  ],
+  "sampleDirectory": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python",
+  "controlPlaneModules": [
+    {
+      "responsibility": "ARM SDK operations: create and delete SQL containers with vector indexes using azure-mgmt-cosmosdb typed models (SqlContainerResource, SqlContainerCreateUpdateParameters)",
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\control_plane.py",
+      "citation": {
+        "excerpt": "Control-plane operations for Cosmos DB SQL (NoSQL) API using ARM SDK.",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\control_plane.py",
+        "locator": "control_plane.py:1-4"
+      }
+    }
+  ],
+  "sampleRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+  "snippets": [
+    {
+      "verbatimText": "\ndef _build_container_create_parameters(\n    container_name: str,\n    partition_key_path: str,\n    embedding_field: str,\n    dimensions: int,\n    index_type: str,\n    location: str,\n) -> SqlContainerCreateUpdateParameters:\n    resource = SqlContainerResource(\n        id=container_name,\n        partition_key=ContainerPartitionKey(\n            paths=[partition_key_path],\n            kind=\"Hash\",\n        ),\n        indexing_policy=IndexingPolicy(\n            indexing_mode=\"Consistent\",\n            automatic=True,\n            included_paths=[IncludedPath(path=\"/*\")],\n            excluded_paths=[\n                ExcludedPath(path=\"/_etag/?\"),\n                ExcludedPath(path=f\"{embedding_field}/*\"),\n            ],\n            vector_indexes=[\n                VectorIndex(path=embedding_field, type=index_type),\n            ],\n        ),\n        vector_embedding_policy=VectorEmbeddingPolicy(\n            vector_embeddings=[\n                VectorEmbedding(\n                    path=embedding_field,\n                    data_type=\"float32\",\n                    dimensions=dimensions,\n                    distance_function=\"cosine\",\n                ),\n            ],\n        ),\n    )\n    return SqlContainerCreateUpdateParameters(\n        resource=resource,\n        location=location,\n    )",
+      "startLine": 28,
+      "id": "python-container-creation-with-vector-policy",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\control_plane.py",
+      "purpose": "container-creation-with-vector-policy",
+      "endLine": 69,
+      "language": "python"
+    },
+    {
+      "verbatimText": "def create_cosmos_client(config: SampleConfig, credential: DefaultAzureCredential) -> CosmosClient:\n    return CosmosClient(url=config.cosmos_endpoint, credential=credential)\n\n\ndef create_azure_openai_client(\n    config: SampleConfig, credential: DefaultAzureCredential\n) -> AzureOpenAI:\n    token_provider = get_bearer_token_provider(\n        credential, \"https://cognitiveservices.azure.com/.default\"\n    )\n    return AzureOpenAI(\n        azure_endpoint=config.openai_embedding_endpoint,",
+      "startLine": 46,
+      "id": "python-default-azure-credential-client-construction",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+      "purpose": "default-azure-credential-client-construction",
+      "endLine": 57,
+      "language": "python"
+    },
+    {
+      "verbatimText": "def query_top_matches(\n    container: Any,\n    container_name: str,\n    config: SampleConfig,\n    query_embedding: Sequence[float],\n    distance_function: str = \"Cosine\",\n) -> QuerySummary:\n    embedding_field = validate_field_name(config.embedding_field_name)\n    # ORDER BY VectorDistance(...) is REQUIRED for nearest-neighbor ranking.\n    # Without it, SELECT TOP N returns N arbitrary documents, not the closest ones.\n    # Field names cannot be query parameters in Cosmos DB SQL; interpolate them inline.\n    query_text = (\n        \"SELECT TOP @topK c.HotelId, c.HotelName, c.Description, \"\n        \"VectorDistance(c.{0}, @embedding, false, {{'distanceFunction': '{1}'}}) AS SimilarityScore \"\n        \"FROM c \"\n        \"ORDER BY VectorDistance(c.{0}, @embedding, false, {{'distanceFunction': '{1}'}})\"\n    ).format(embedding_field, distance_function)\n\n    raw_results = list(\n        container.query_items(\n            query=query_text,\n            parameters=[\n                {\"name\": \"@topK\", \"value\": config.top_count},\n                {\"name\": \"@embedding\", \"value\": list(query_embedding)},\n            ],\n            partition_key=config.partition_key_value,\n        )\n    )\n\n    results = [\n        QueryResult(\n            hotel_id=str(item[\"HotelId\"]),\n            hotel_name=str(item[\"HotelName\"]),\n            description=str(item[\"Description\"]),\n            score=float(item[\"SimilarityScore\"]),\n        )\n        for item in raw_results\n    ]\n\n    headers = getattr(container.client_connection, \"last_response_headers\", {}) or {}\n    return QuerySummary(",
+      "startLine": 161,
+      "id": "python-vector-distance-query-with-field-validation",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+      "purpose": "vector-distance-query-with-field-validation",
+      "endLine": 201,
+      "language": "python"
+    },
+    {
+      "verbatimText": "def delete_containers(credential: DefaultAzureCredential, config: SampleConfig) -> None:\n    \"\"\"Delete SQL containers using control-plane (ARM) SDK.\n\n    Args:\n        credential: Azure credential for authentication\n        config: Sample configuration with resource details\n    \"\"\"\n    from .config import validate_container_deletion_targets\n\n    validate_container_deletion_targets(config)\n    client = CosmosDBManagementClient(\n        credential=credential,\n        subscription_id=config.subscription_id\n    )\n\n    container_names = [\n        config.diskann_container_name,\n        config.quantizedflat_container_name,\n    ]\n\n    for container_name in container_names:\n        try:\n            # Delete container using ARM SDK\n            client.sql_resources.begin_delete_sql_container(\n                resource_group_name=config.resource_group,\n                account_name=config.account_name,\n                database_name=config.database_name,\n                container_name=container_name\n            ).result()  # Wait for async operation\n            print(f\"  ✓ Deleted {container_name}\")\n        except HttpResponseError as e:\n            # 404 is expected if container doesn't exist — skip silently\n            if e.status_code == 404:\n                print(f\"  ✓ {container_name} does not exist (OK)\")\n            else:\n                raise",
+      "startLine": 136,
+      "id": "python-guarded-container-deletion",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\control_plane.py",
+      "purpose": "guarded-container-deletion",
+      "endLine": 171,
+      "language": "python"
+    },
+    {
+      "verbatimText": "\ndef validate_field_name(field_name: str) -> str:\n    import re\n\n    if not re.match(FIELD_NAME_PATTERN, field_name):\n        raise ValueError(\n            \"Invalid embedding field name: {0}\".format(field_name)\n        )",
+      "startLine": 226,
+      "id": "python-field-name-validation",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+      "purpose": "field-name-validation",
+      "endLine": 233,
+      "language": "python"
+    }
+  ],
+  "dataPlaneModules": [
+    {
+      "responsibility": "Data-plane operations: Cosmos DB client creation, Azure OpenAI client creation, document ingestion via TransactionalBatch (execute_item_batch), VectorDistance queries, field validation",
+      "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+      "citation": {
+        "excerpt": "Data-plane operations for the nosql-create-index-python sample.",
+        "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+        "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+        "locator": "data_plane.py:1"
+      }
+    }
+  ],
+  "language": "python",
+  "insertionStrategy": {
+    "approach": "TransactionalBatch per region via container.execute_item_batch(batch_operations=operations, partition_key=region). Documents grouped by Region partition key, then upserted in one batch per region.",
+    "citation": {
+      "excerpt": "operations = [(\"upsert\", (document,)) for document in region_docs]; results = container.execute_item_batch(batch_operations=operations, partition_key=region,)",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\data_plane.py",
+      "locator": "data_plane.py:127-133"
+    },
+    "sdkConstraint": "Python azure-cosmos SDK lacks native bulk execution. Uses TransactionalBatch (max 100 ops per partition). Pre-batching by region required."
+  },
+  "configurationTemplate": {
+    "autoLoaded": false,
+    "path": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\.env.example",
+    "citation": {
+      "excerpt": "environment = env or os.environ",
+      "sourceRevision": "a01cf5344bb449187f2647e19c6b0014a493d80c",
+      "sourcePath": "C:\\my-squad-projects\\project-dina-data-ai\\repos\\cosmos-db-vector-samples\\nosql-create-index-python\\src\\config.py",
+      "locator": "config.py:93-95"
+    },
+    "loadingMechanism": "Process environment through os.environ; no automatic .env loading. User must manually export variables before running."
+  }
+}

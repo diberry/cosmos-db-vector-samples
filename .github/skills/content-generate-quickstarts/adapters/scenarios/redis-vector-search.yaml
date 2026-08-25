@@ -1,0 +1,68 @@
+# STRUCTURAL PROOF for SMART goal 1.1 — Redis vector search.
+# This is a schema-conformance fixture that proves Layer A's scenario schema
+# can describe the Redis vector search scenario without forking the engine.
+# It is a DECLARATION ONLY — it MUST NOT contain invented technical facts.
+# Every field whose value is not yet sourced is explicitly marked
+# status: not-yet-sourced with sourceRequired: true.
+schemaVersion: 1
+adapterId: redis-vector-search
+extendsBaseAdapter: null
+goalScenario: true
+countsTowardGoalQuickstartTotal: true
+
+displayName: Redis vector search quickstart adapter
+productFamily: Redis
+
+authorities:
+  - id: scenarioConstitution
+    path: null
+    authorityRank: 2
+    ownership: technical
+    status: not-yet-sourced
+    sourceRequired: true
+
+sampleDirectories: []
+  # Not yet sourced — sample directories will be defined when the Redis
+  # vector search scenario is implemented.
+
+requiredEnvironmentVariables: []
+  # Not yet sourced — environment contract will be defined from the Redis
+  # vector search scenario constitution.
+
+configurableEnvironmentVariables: []
+
+forbiddenEnvironmentVariables: []
+
+protectedTokens: []
+  # Not yet sourced — protected tokens will be populated from the scenario
+  # constitution and sample evidence.
+
+resourceLifecycle: []
+  # Not yet sourced — lifecycle steps will be defined from the scenario
+  # constitution.
+
+forbiddenGuidance: []
+
+expectedOutput:
+  finalTable:
+    description: null
+    rowCount: null
+    status: not-yet-sourced
+    sourceRequired: true
+  completionRule:
+    description: null
+    status: not-yet-sourced
+    sourceRequired: true
+
+targetArticles: []
+  # Not yet sourced — target articles will be defined when the content PR
+  # is established for this scenario.
+
+knownTargetDrift: []
+
+goalTracking:
+  targetPublishedQuickstarts: null
+  timingEvidenceRequired: true
+  qualityEvidenceRequired: true
+  status: not-yet-sourced
+  sourceRequired: true

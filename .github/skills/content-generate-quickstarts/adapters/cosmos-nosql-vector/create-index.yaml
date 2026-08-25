@@ -1,0 +1,267 @@
+# Article 2 source and language mappings — create-index extension adapter
+schemaVersion: 1
+adapterId: create-index
+extendsBaseAdapter: cosmos-nosql-vector
+goalScenario: false
+countsTowardGoalQuickstartTotal: false
+
+authorities:
+  - id: scenarioConstitution
+    path: .github/docs/CREATE-INDEX-CONSTITUTION.md
+    authorityRank: 2
+    ownership: technical
+  # Base adapter authorities (rank 1 and 3) are inherited from
+  # cosmos-nosql-vector/base.yaml and are not repeated here.
+
+sampleDirectories:
+  - language: dotnet
+    path: nosql-create-index-dotnet
+  - language: go
+    path: nosql-create-index-go
+  - language: java
+    path: nosql-create-index-java
+  - language: python
+    path: nosql-create-index-python
+  - language: typescript
+    path: nosql-create-index-typescript
+
+requiredEnvironmentVariables:
+  - name: AZURE_COSMOSDB_ENDPOINT
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_OPENAI_EMBEDDING_ENDPOINT
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_SUBSCRIPTION_ID
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_RESOURCE_GROUP
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_LOCATION
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_COSMOSDB_ACCOUNT_NAME
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: DATA_FILE_WITH_VECTORS_AND_REGIONS
+    required: true
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+
+configurableEnvironmentVariables:
+  - name: AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME
+    default: hotels_diskann
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - name: AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME
+    default: hotels_quantizedflat
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - name: AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS
+    default: "false"
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - name: AZURE_OPENAI_EMBEDDING_API_VERSION
+    default: null
+    citation: "CREATE-INDEX-CONSTITUTION.md § II.2.2"
+
+forbiddenEnvironmentVariables:
+  - name: DATA_FILE_WITH_VECTORS
+    reason: Lacks region data required by the create-index scenario (HotelsData_toCosmosDB_Vector_byRegion.json)
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+
+protectedTokens:
+  - value: hotels_diskann
+    tokenType: container-name-default
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - value: hotels_quantizedflat
+    tokenType: container-name-default
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - value: AZURE_COSMOSDB_ENDPOINT
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_COSMOSDB_CREATE_INDEX_DATABASENAME
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_OPENAI_EMBEDDING_ENDPOINT
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_OPENAI_EMBEDDING_DEPLOYMENT
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_SUBSCRIPTION_ID
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_RESOURCE_GROUP
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_LOCATION
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_COSMOSDB_ACCOUNT_NAME
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: DATA_FILE_WITH_VECTORS_AND_REGIONS
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_COSMOSDB_CREATE_INDEX_DISKANN_CONTAINER_NAME
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - value: AZURE_COSMOSDB_CREATE_INDEX_QUANTIZEDFLAT_CONTAINER_NAME
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - value: AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - value: AZURE_OPENAI_EMBEDDING_API_VERSION
+    tokenType: environment-variable-name
+    citation: "CREATE-INDEX-CONSTITUTION.md § II.2.2"
+  - value: "^[A-Za-z_][A-Za-z0-9_]*$"
+    tokenType: field-name-validation-regex
+    citation: "QUICKSTART-CONSTITUTION.md § IV.4.2"
+  - value: VectorDistance()
+    tokenType: query-function
+    citation: "QUICKSTART-CONSTITUTION.md § V.5.1"
+  - value: azd auth login
+    tokenType: lifecycle-command
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - value: az login
+    tokenType: lifecycle-command
+    citation: "QUICKSTART-CONSTITUTION.md § II.2.1"
+  - value: azd up
+    tokenType: lifecycle-command
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - value: azd provision
+    tokenType: lifecycle-command
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - value: azd down
+    tokenType: lifecycle-command
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - value: azd hooks run postprovision
+    tokenType: lifecycle-command
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - value: .github\skills\sample-validate-nosql-create-index\scripts\validate-create-index-samples.ps1
+    tokenType: validator-path
+    citation: "CREATE-INDEX-CONSTITUTION.md § VII.7.2"
+  - value: .github\scripts\clean-all-create-index.ps1
+    tokenType: cleanup-script-path
+    citation: "CREATE-INDEX-CONSTITUTION.md § VII.7.3"
+
+resourceLifecycle:
+  - step: 1
+    action: azd up
+    ownership: tool
+    note: Provisions account, Azure OpenAI, RBAC, and the create-index database; postprovision hook restores data files.
+  - step: 2
+    action: Control-plane create and verify containers
+    ownership: sample-code
+    plane: control-plane
+  - step: 3
+    action: Data-plane insert documents and query
+    ownership: sample-code
+    plane: data-plane
+  - step: 4
+    action: Control-plane container cleanup
+    ownership: sample-code
+    plane: control-plane
+  - step: 5
+    action: Local generated-artifact cleanup
+    ownership: cleanup
+  - step: 6
+    action: Explicit confirmation
+    ownership: tool
+  - step: 7
+    action: azd down
+    ownership: tool
+
+forbiddenGuidance:
+  - item: Connection strings
+    citation: "QUICKSTART-CONSTITUTION.md § II.2.1"
+  - item: Account keys
+    citation: "QUICKSTART-CONSTITUTION.md § II.2.1"
+  - item: Public OpenAI keys
+    citation: "QUICKSTART-CONSTITUTION.md § II.2.1"
+  - item: Hardcoded credentials
+    citation: "QUICKSTART-CONSTITUTION.md § II.2.1"
+  - item: Database create/update/delete from sample code
+    citation: "CREATE-INDEX-CONSTITUTION.md § III.3.1"
+  - item: Arbitrary container deletion
+    citation: "CREATE-INDEX-CONSTITUTION.md § III.3.2"
+  - item: Direct resource-group deletion
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - item: Language-suffixed container names (_py, _ts, _java, _go, _dotnet)
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - item: Manual data copying instead of the azd postprovision hook
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+
+expectedOutput:
+  finalTable:
+    description: Six-row Markdown results table — DiskANN and QuantizedFlat × Cosine, DotProduct, Euclidean
+    rowCount: 6
+    citation: "CREATE-INDEX-CONSTITUTION.md § VI"
+  completionRule:
+    description: "'Complete' printed only after cleanup succeeds"
+    citation: "CREATE-INDEX-CONSTITUTION.md § VI item 8"
+
+targetArticles:
+  - language: dotnet
+    articleId: create-index-dotnet
+    targetPath: null
+    resolvedAtRunTime: true
+  - language: go
+    articleId: create-index-go
+    targetPath: null
+    resolvedAtRunTime: true
+  - language: java
+    articleId: create-index-java
+    targetPath: null
+    resolvedAtRunTime: true
+  - language: python
+    articleId: create-index-python
+    targetPath: null
+    resolvedAtRunTime: true
+  - language: typescript
+    articleId: create-index-typescript
+    targetPath: null
+    resolvedAtRunTime: true
+  # Target paths in nosql-docs-pr cannot be verified from this repository.
+  # They are resolved at run time from the PR metadata or target-repository
+  # checkout when available. See report for details.
+
+knownTargetDrift:
+  - id: obsolete-language-suffixed-container-names
+    description: Articles use language-suffixed container names instead of hotels_diskann and hotels_quantizedflat
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - id: manual-data-copy
+    description: Articles tell readers to copy data manually instead of explaining the azd postprovision hook
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - id: missing-allow-destructive-operations
+    description: Articles omit AZURE_COSMOSDB_CREATE_INDEX_ALLOW_DESTRUCTIVE_OPERATIONS
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - id: missing-configurable-container-names
+    description: Articles omit the two configurable container-name variables
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.1"
+  - id: missing-shared-validator-and-cleanup
+    description: Articles omit the shared validator and local generated-artifact cleanup
+    citation: "CREATE-INDEX-CONSTITUTION.md § VII.7.2, VII.7.3"
+  - id: missing-azd-down
+    description: Articles omit the final azd down resource teardown
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - id: inconsistent-lifecycle
+    description: Articles fail to present one consistent end-to-end lifecycle across all languages
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - id: typescript-wrong-openai-endpoint
+    description: TypeScript article uses AZURE_OPENAI_ENDPOINT instead of AZURE_OPENAI_EMBEDDING_ENDPOINT
+    citation: "CREATE-INDEX-CONSTITUTION.md § II.2.2"
+  - id: typescript-forbidden-data-file-fallback
+    description: TypeScript article uses forbidden DATA_FILE_WITH_VECTORS fallback
+    citation: "CREATE-INDEX-CONSTITUTION.md § I.1.2"
+  - id: typescript-direct-resource-group-deletion
+    description: TypeScript article recommends direct resource-group deletion
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"
+  - id: dotnet-direct-resource-group-deletion
+    description: .NET article recommends direct resource-group deletion
+    citation: "CREATE-INDEX-CONSTITUTION.md § IX"

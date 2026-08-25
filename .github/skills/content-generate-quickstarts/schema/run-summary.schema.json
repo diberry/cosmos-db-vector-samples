@@ -1,0 +1,301 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Run summary",
+  "description": "Stage 12 run-summary artifact. Defines timing metrics, quality metrics, publication validation, and pending actions. Reserved Goal 1.1 fields for the locked Azure SQL and Redis vector-search scenarios are nullable.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "timingMetrics",
+    "qualityMetrics",
+    "publicationValidation",
+    "pendingActions"
+  ],
+  "definitions": {
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    },
+    "validationResult": {
+      "type": "string",
+      "enum": ["pass", "fail"],
+      "description": "Pass or fail result."
+    },
+    "timingMetrics": {
+      "type": "object",
+      "description": "Per-language and total timing evidence.",
+      "additionalProperties": false,
+      "required": ["runId", "perLanguage", "totalElapsedMs", "timeToPublishMs", "goal11TimingFields"],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "perLanguage": {
+          "type": "array",
+          "description": "Per-language stage timing.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["language", "stages"],
+            "properties": {
+              "language": {
+                "$ref": "#/definitions/language"
+              },
+              "stages": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "required": ["stage", "startUtc", "endUtc", "elapsedMs"],
+                  "properties": {
+                    "stage": {
+                      "type": "string",
+                      "minLength": 1,
+                      "description": "Stage name or number."
+                    },
+                    "startUtc": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Stage start time."
+                    },
+                    "endUtc": {
+                      "type": "string",
+                      "format": "date-time",
+                      "description": "Stage end time."
+                    },
+                    "elapsedMs": {
+                      "type": "integer",
+                      "minimum": 0,
+                      "description": "Elapsed milliseconds."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "totalElapsedMs": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total elapsed time for the entire run in milliseconds."
+        },
+        "timeToPublishMs": {
+          "type": ["integer", "null"],
+          "minimum": 0,
+          "description": "Time to publication in milliseconds, null if not published."
+        },
+        "goal11TimingFields": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Reserved timing fields for the locked Azure SQL and Redis vector-search scenarios.",
+          "properties": {
+            "azureSqlTimingMs": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Reserved: Azure SQL scenario timing."
+            },
+            "redisTimingMs": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Reserved: Redis scenario timing."
+            },
+            "totalGoalTimingMs": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Reserved: Total Goal 1.1 timing."
+            }
+          }
+        }
+      }
+    },
+    "qualityMetrics": {
+      "type": "object",
+      "description": "Quality evidence for the run.",
+      "additionalProperties": false,
+      "required": [
+        "runId",
+        "editorialGate",
+        "conventionResults",
+        "protectedContractResult",
+        "parityResult",
+        "idempotenceResult",
+        "goal11QualityFields"
+      ],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "editorialGate": {
+          "type": "string",
+          "enum": ["mosaic", "approved-equivalent", "draft-only", "not-run"],
+          "description": "Which editorial gate was used."
+        },
+        "conventionResults": {
+          "type": "array",
+          "description": "Per-convention quality results.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["convention", "result"],
+            "properties": {
+              "convention": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Convention name."
+              },
+              "result": {
+                "$ref": "#/definitions/validationResult"
+              }
+            }
+          }
+        },
+        "protectedContractResult": {
+          "$ref": "#/definitions/validationResult",
+          "description": "Protected technical contract check result."
+        },
+        "parityResult": {
+          "$ref": "#/definitions/validationResult",
+          "description": "Cross-language parity check result."
+        },
+        "idempotenceResult": {
+          "$ref": "#/definitions/validationResult",
+          "description": "Idempotence check result."
+        },
+        "goal11QualityFields": {
+          "type": "object",
+          "additionalProperties": false,
+          "description": "Reserved quality fields for Goal 1.1 locked scenarios.",
+          "properties": {
+            "azureSqlQuality": {
+              "type": ["string", "null"],
+              "description": "Reserved: Azure SQL scenario quality evidence."
+            },
+            "redisQuality": {
+              "type": ["string", "null"],
+              "description": "Reserved: Redis scenario quality evidence."
+            },
+            "publishedQuickstartCount": {
+              "type": ["integer", "null"],
+              "minimum": 0,
+              "description": "Reserved: Count of published quickstarts toward the 10-quickstart goal."
+            }
+          }
+        }
+      }
+    },
+    "publicationValidation": {
+      "type": "object",
+      "description": "Final publication readiness determination.",
+      "additionalProperties": false,
+      "required": ["runId", "publicationReady", "gateType", "stage11Result", "blockingReasons"],
+      "properties": {
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "publicationReady": {
+          "type": "boolean",
+          "description": "Whether the run is publication-ready."
+        },
+        "gateType": {
+          "type": "string",
+          "enum": ["mosaic", "approved-equivalent", "draft-only"],
+          "description": "Gate type used."
+        },
+        "stage11Result": {
+          "$ref": "#/definitions/validationResult",
+          "description": "Stage 11 post-editorial validation result."
+        },
+        "blockingReasons": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Reasons blocking publication."
+        }
+      }
+    },
+    "pendingActions": {
+      "type": "object",
+      "description": "Actions awaiting explicit approval.",
+      "additionalProperties": false,
+      "required": ["actions"],
+      "properties": {
+        "actions": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "actionId",
+              "description",
+              "category",
+              "requiresExplicitApproval",
+              "executed"
+            ],
+            "properties": {
+              "actionId": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Unique action identifier."
+              },
+              "description": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What the action does."
+              },
+              "category": {
+                "type": "string",
+                "enum": [
+                  "external-repository-write",
+                  "branch",
+                  "commit",
+                  "push",
+                  "pull-request",
+                  "ado-update",
+                  "azure-operation"
+                ],
+                "description": "Action category."
+              },
+              "requiresExplicitApproval": {
+                "const": true,
+                "description": "All pending actions require explicit approval."
+              },
+              "executed": {
+                "const": false,
+                "description": "Pending actions have not been executed."
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "timingMetrics": {
+      "$ref": "#/definitions/timingMetrics"
+    },
+    "qualityMetrics": {
+      "$ref": "#/definitions/qualityMetrics"
+    },
+    "publicationValidation": {
+      "$ref": "#/definitions/publicationValidation"
+    },
+    "pendingActions": {
+      "$ref": "#/definitions/pendingActions"
+    }
+  }
+}

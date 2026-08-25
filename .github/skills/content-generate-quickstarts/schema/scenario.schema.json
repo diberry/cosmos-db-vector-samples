@@ -1,0 +1,368 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Scenario definition",
+  "description": "Versioned, technology-neutral scenario-definition contract (Layer A). Describes any quickstart scenario — including Cosmos NoSQL vector/create-index, Azure SQL vector search, and Redis vector search — without engine changes.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "scenarioId",
+    "displayName",
+    "productFamily",
+    "goalScenario",
+    "countsTowardGoalQuickstartTotal",
+    "baseConstitutionPath",
+    "scenarioConstitutionPath",
+    "languages",
+    "sampleDirectoryPattern",
+    "lifecycle",
+    "controlPlane",
+    "dataPlane",
+    "authentication",
+    "configuration",
+    "resources",
+    "validation",
+    "lifecycleSkills",
+    "spineExtensions",
+    "protectedTokenSources",
+    "referenceLinks"
+  ],
+  "definitions": {
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "scenarioId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique scenario identifier (e.g. cosmos-nosql-create-index, azure-sql-vector-search, redis-vector-search)."
+    },
+    "displayName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Human-readable scenario name."
+    },
+    "productFamily": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Product family (e.g. cosmos-db, azure-sql, redis)."
+    },
+    "goalScenario": {
+      "type": "boolean",
+      "description": "True only for locked Goal 1.1 scenarios (Azure SQL and Redis vector search). Cosmos/DocumentDB baseline scenarios are false."
+    },
+    "countsTowardGoalQuickstartTotal": {
+      "type": "boolean",
+      "description": "True only when quickstarts from this scenario count toward the Goal 1.1 10-quickstart total."
+    },
+    "baseConstitutionPath": {
+      "$ref": "#/definitions/absolutePath",
+      "description": "Absolute path to the base constitution file."
+    },
+    "scenarioConstitutionPath": {
+      "$ref": "#/definitions/absolutePath",
+      "description": "Absolute path to the scenario-specific constitution file."
+    },
+    "languages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/definitions/language"
+      },
+      "description": "Languages this scenario supports."
+    },
+    "sampleDirectoryPattern": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Glob or pattern for locating sample directories (e.g. nosql-create-index-*)."
+    },
+    "lifecycle": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered lifecycle steps for this scenario.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "name", "ownership"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable step identifier."
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Human-readable step name."
+          },
+          "ownership": {
+            "type": "string",
+            "enum": ["tool", "sample-code", "control-plane", "data-plane", "cleanup"],
+            "description": "Which component owns this lifecycle step."
+          }
+        }
+      }
+    },
+    "controlPlane": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Control-plane SDK and operation boundaries.",
+      "required": ["enabled", "sdkSurface", "allowedOperations", "forbiddenOperations"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether control-plane operations are used in this scenario."
+        },
+        "sdkSurface": {
+          "type": "string",
+          "description": "SDK surface identifier for control-plane operations."
+        },
+        "allowedOperations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Operations the scenario is permitted to perform."
+        },
+        "forbiddenOperations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Operations explicitly forbidden for this scenario."
+        }
+      }
+    },
+    "dataPlane": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Data-plane SDK and operation boundaries.",
+      "required": ["enabled", "sdkSurface", "allowedOperations", "forbiddenOperations"],
+      "properties": {
+        "enabled": {
+          "type": "boolean",
+          "description": "Whether data-plane operations are used in this scenario."
+        },
+        "sdkSurface": {
+          "type": "string",
+          "description": "SDK surface identifier for data-plane operations."
+        },
+        "allowedOperations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Data-plane operations the scenario performs."
+        },
+        "forbiddenOperations": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Data-plane operations explicitly forbidden."
+        }
+      }
+    },
+    "authentication": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Authentication model and constraints.",
+      "required": ["model", "credentialType", "forbiddenMechanisms"],
+      "properties": {
+        "model": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Authentication model (e.g. passwordless-entra-id)."
+        },
+        "credentialType": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Credential type (e.g. DefaultAzureCredential)."
+        },
+        "forbiddenMechanisms": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Authentication mechanisms that are explicitly forbidden."
+        }
+      }
+    },
+    "configuration": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Environment variable and configuration contract.",
+      "required": ["requiredEnvironmentVariables", "forbiddenEnvironmentVariables"],
+      "properties": {
+        "requiredEnvironmentVariables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "purpose", "required"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Environment variable name."
+              },
+              "purpose": {
+                "type": "string",
+                "minLength": 1,
+                "description": "What this variable configures."
+              },
+              "default": {
+                "type": ["string", "null"],
+                "description": "Default value, or null if no default."
+              },
+              "required": {
+                "type": "boolean",
+                "description": "Whether this variable is required (no default or must be set)."
+              }
+            }
+          },
+          "description": "Required and optional environment variables."
+        },
+        "forbiddenEnvironmentVariables": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "reason"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Forbidden variable name."
+              },
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Why this variable is forbidden."
+              }
+            }
+          },
+          "description": "Environment variables that must not be accepted."
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Managed resource boundaries.",
+      "required": ["managedResourceNames", "destructiveOperationOptIn"],
+      "properties": {
+        "managedResourceNames": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Resource names the scenario manages."
+        },
+        "destructiveOperationOptIn": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Name of the environment variable that gates destructive operations."
+        }
+      }
+    },
+    "validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Validation and cleanup configuration.",
+      "required": ["sharedValidatorPath", "cleanupScriptPath", "successCriteria"],
+      "properties": {
+        "sharedValidatorPath": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Path to the shared validation script."
+        },
+        "cleanupScriptPath": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Path to the cleanup script."
+        },
+        "successCriteria": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 },
+          "description": "Criteria that define validation success."
+        }
+      }
+    },
+    "lifecycleSkills": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Map of lifecycle operations to canonical skill names.",
+      "patternProperties": {
+        "^[a-z][a-z0-9-]*$": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Skill name for this lifecycle operation."
+        }
+      }
+    },
+    "spineExtensions": {
+      "type": "array",
+      "description": "References into the general spine's 9 concepts that this scenario extends.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["conceptId", "extensionDescription"],
+        "properties": {
+          "conceptId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "References a conceptId from the general quickstart spine."
+          },
+          "extensionDescription": {
+            "type": "string",
+            "minLength": 1,
+            "description": "How this scenario extends the referenced spine concept."
+          }
+        }
+      }
+    },
+    "protectedTokenSources": {
+      "type": "array",
+      "description": "Sources of protected tokens for this scenario.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sourceType", "sourcePath"],
+        "properties": {
+          "sourceType": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Type of source (constitution, sample, configuration)."
+          },
+          "sourcePath": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Path to the source of protected tokens."
+          }
+        }
+      }
+    },
+    "referenceLinks": {
+      "type": "array",
+      "description": "Reference links for this scenario.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "url"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Link display label."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Link URL."
+          }
+        }
+      }
+    }
+  }
+}

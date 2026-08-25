@@ -1,0 +1,153 @@
+# Adapters carry mappings and citations, never copied rules, never editorial conventions.
+schemaVersion: 1
+adapterId: cosmos-nosql-vector
+displayName: Cosmos DB for NoSQL vector quickstart base adapter
+productFamily: Azure Cosmos DB for NoSQL
+
+authorities:
+  - id: baseConstitution
+    path: .github/QUICKSTART-CONSTITUTION.md
+    authorityRank: 1
+    ownership: technical
+  - id: repositoryInstructions
+    path: .github/copilot-instructions.md
+    authorityRank: 3
+    ownership: technical
+  - id: cliExamplesInstructions
+    path: .github/instructions/cli-examples.instructions.md
+    authorityRank: 3
+    ownership: technical
+  - id: terminologyInstructions
+    path: .github/instructions/terminology-and-review.instructions.md
+    authorityRank: 3
+    ownership: technical
+  - id: vectorSearchSamplesInstructions
+    path: .github/instructions/vector-search-samples.instructions.md
+    authorityRank: 3
+    ownership: technical
+
+sharedConcepts:
+  - conceptId: passwordless-authentication
+    extendsSpineConcept: 5-authenticate-securely
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § II.2.1 Passwordless Authentication (Primary)"
+    summary: DefaultAzureCredential for Cosmos DB and Azure OpenAI
+
+  - conceptId: upfront-env-validation
+    extendsSpineConcept: 4-provision-and-configure
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.1 Upfront Validation Timing"
+    summary: Validate all environment variables before any client operations
+
+  - conceptId: field-name-whitelist-validation
+    extendsSpineConcept: 6-run-and-understand-the-code
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § IV.4.2 Field Name Validation Whitelist"
+    summary: Regex ^[A-Za-z_][A-Za-z0-9_]*$ before SQL interpolation
+
+  - conceptId: vector-distance-query-syntax
+    extendsSpineConcept: 6-run-and-understand-the-code
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § V.5.1 Approved Query Syntax"
+    summary: VectorDistance() with TOP and ORDER BY
+
+  - conceptId: forbidden-mongo-wire-protocol
+    extendsSpineConcept: 6-run-and-understand-the-code
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § V.5.1 Approved Query Syntax"
+    summary: No $search, cosmosSearch, createIndexes, or MongoDB wire protocol
+
+  - conceptId: one-sdk-generation-per-surface
+    extendsSpineConcept: 6-run-and-understand-the-code
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § VI.6.1 Dependency Governance"
+    summary: One supported SDK generation per service surface
+
+  - conceptId: cross-language-parity
+    extendsSpineConcept: 6-run-and-understand-the-code
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § VI.6.2 Cross-Language Authority"
+    summary: No reference implementation; five languages maintain parity
+
+  - conceptId: env-template-rule
+    extendsSpineConcept: 4-provision-and-configure
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 Language-Native Configuration Patterns"
+    summary: Committed .env.example or appsettings.json template per sample; runtime files gitignored
+
+  - conceptId: language-config-loading
+    extendsSpineConcept: 4-provision-and-configure
+    authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 Language-Native Configuration Patterns"
+    summary: Language-native configuration loading behavior per the base constitution table
+
+languages:
+  - id: python
+    sampleDirectoryPrefix:
+      - nosql-create-index-python
+      - nosql-vector-search-python
+    configurationLoading:
+      authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 — Python row"
+
+  - id: typescript
+    sampleDirectoryPrefix:
+      - nosql-create-index-typescript
+      - nosql-vector-search-typescript
+    configurationLoading:
+      authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 — TypeScript row"
+
+  - id: java
+    sampleDirectoryPrefix:
+      - nosql-create-index-java
+      - nosql-vector-search-java
+    configurationLoading:
+      authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 — Java row"
+
+  - id: go
+    sampleDirectoryPrefix:
+      - nosql-create-index-go
+      - nosql-vector-search-go
+    configurationLoading:
+      authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 — Go row"
+
+  - id: dotnet
+    sampleDirectoryPrefix:
+      - nosql-create-index-dotnet
+      - nosql-vector-search-dotnet
+    configurationLoading:
+      authorityLocator: "QUICKSTART-CONSTITUTION.md § III.3.2 — .NET row"
+
+# Product identities are sourced canonical names ONLY.
+# Branding, terminology presentation, and other editorial conventions are
+# editorial-gate-owned and MUST NOT be encoded here.
+productIdentities:
+  - name: Azure Cosmos DB
+    citation: "QUICKSTART-CONSTITUTION.md title and § I"
+  - name: Azure Cosmos DB for NoSQL
+    citation: "QUICKSTART-CONSTITUTION.md § I.1.1"
+  - name: Azure OpenAI
+    citation: "QUICKSTART-CONSTITUTION.md § V.5.2 Required Terminology"
+  - name: Azure Resource Manager
+    citation: "QUICKSTART-CONSTITUTION.md § I.1.1 — create-index model"
+  - name: Azure Developer CLI
+    citation: "copilot-instructions.md — azd up"
+  - name: Microsoft Entra ID
+    citation: "copilot-instructions.md § Authentication and Authorization"
+  - name: DiskANN
+    citation: "QUICKSTART-CONSTITUTION.md § V.5.2 Required Terminology"
+  - name: QuantizedFlat
+    citation: "QUICKSTART-CONSTITUTION.md § V.5.2 Required Terminology"
+  - name: Flat
+    citation: "QUICKSTART-CONSTITUTION.md § V.5.2 Required Terminology"
+
+lifecycleSkills:
+  provision: sample-provision-nosql-create-index
+  validate: sample-validate-nosql-create-index
+  cleanup: samples-cleanup-nosql-create-index
+  deprovision: sample-deprovision-nosql-create-index
+
+extensions:
+  - id: create-index
+    type: governed-extension
+    note: Article 2 baseline extension for the create-index quickstart scenario
+  # Further Cosmos NoSQL vector baseline extensions may plug into this
+  # same base adapter without changing Layer A.
+
+goalAlignment:
+  goalScenario: false
+  countsTowardGoalQuickstartTotal: false
+  note: >
+    Cosmos DB for NoSQL / DocumentDB is the H1 baseline and reusable-engine
+    support only. It is not either locked Goal 1.1 scenario and its
+    quickstarts do not count toward the goal's 10-quickstart total.

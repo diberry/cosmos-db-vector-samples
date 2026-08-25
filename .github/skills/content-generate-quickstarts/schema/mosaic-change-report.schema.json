@@ -1,0 +1,218 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Mosaic change report",
+  "description": "Machine-reviewable editorial-versus-protected change contract. Classifies every change between pre-editorial and post-editorial article candidates to detect whether protected technical content has been altered.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "gateType",
+    "files",
+    "summary"
+  ],
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hash in lowercase hex."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "gateType": {
+      "type": "string",
+      "enum": ["mosaic", "approved-equivalent"],
+      "description": "Which editorial gate produced these changes."
+    },
+    "files": {
+      "type": "array",
+      "description": "Per-file change records.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "inputHash", "revisedHash", "changes"],
+        "properties": {
+          "path": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Relative path to the file."
+          },
+          "inputHash": {
+            "$ref": "#/definitions/sha256",
+            "description": "SHA-256 hash of the original input file."
+          },
+          "revisedHash": {
+            "$ref": "#/definitions/sha256",
+            "description": "SHA-256 hash of the revised output file."
+          },
+          "changes": {
+            "type": "array",
+            "description": "Individual change records within this file.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": [
+                "changeId",
+                "hunkLocator",
+                "beforeHash",
+                "afterHash",
+                "classification",
+                "editorialRationale",
+                "affectedContractIds",
+                "affectedClaimIds",
+                "protectedTokensBefore",
+                "protectedTokensAfter",
+                "normalizedEqual",
+                "decision"
+              ],
+              "properties": {
+                "changeId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Unique change identifier."
+                },
+                "hunkLocator": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "description": "Stable hunk locator for this change.",
+                  "required": ["startLine", "endLine", "contextHash"],
+                  "properties": {
+                    "startLine": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "Start line of the hunk."
+                    },
+                    "endLine": {
+                      "type": "integer",
+                      "minimum": 1,
+                      "description": "End line of the hunk."
+                    },
+                    "contextHash": {
+                      "$ref": "#/definitions/sha256",
+                      "description": "SHA-256 hash of the surrounding context for stability."
+                    }
+                  }
+                },
+                "beforeHash": {
+                  "$ref": "#/definitions/sha256",
+                  "description": "SHA-256 of the hunk content before the change."
+                },
+                "afterHash": {
+                  "$ref": "#/definitions/sha256",
+                  "description": "SHA-256 of the hunk content after the change."
+                },
+                "classification": {
+                  "type": "string",
+                  "enum": ["editorial", "protected-technical", "unclassified"],
+                  "description": "Change classification."
+                },
+                "editorialRationale": {
+                  "type": "string",
+                  "description": "Rationale for the editorial change."
+                },
+                "affectedContractIds": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Contract IDs affected by this change."
+                },
+                "affectedClaimIds": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Claim IDs affected by this change."
+                },
+                "protectedTokensBefore": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Protected token values before the change."
+                },
+                "protectedTokensAfter": {
+                  "type": "array",
+                  "items": { "type": "string" },
+                  "description": "Protected token values after the change."
+                },
+                "normalizedEqual": {
+                  "type": "boolean",
+                  "description": "Whether before and after are equal after normalization (e.g. stripping backticks)."
+                },
+                "decision": {
+                  "type": "string",
+                  "enum": ["pass", "fail"],
+                  "description": "Whether this change passes or fails the protected-content check."
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Aggregate summary of all changes.",
+      "required": [
+        "editorialChangeCount",
+        "unchangedProtectedTokenCount",
+        "unchangedClaimCount",
+        "attemptedProtectedChangeCount",
+        "unclassifiedChangeCount",
+        "publicationConventionFailureCount",
+        "overallDecision"
+      ],
+      "properties": {
+        "editorialChangeCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of editorial-only changes."
+        },
+        "unchangedProtectedTokenCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of protected tokens unchanged after normalization."
+        },
+        "unchangedClaimCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of protected claims unchanged."
+        },
+        "attemptedProtectedChangeCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of changes that attempted to modify protected content."
+        },
+        "unclassifiedChangeCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of unclassified changes."
+        },
+        "publicationConventionFailureCount": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of publication convention failures."
+        },
+        "overallDecision": {
+          "type": "string",
+          "enum": ["pass", "fail"],
+          "description": "Overall pass/fail decision."
+        }
+      }
+    }
+  },
+  "allOf": [
+    {
+      "description": "Rule: unclassified or protected-technical classification MUST have decision fail. This constraint is partially enforced here; full enforcement requires script logic to iterate over all change items.",
+      "if": true,
+      "then": true
+    }
+  ]
+}

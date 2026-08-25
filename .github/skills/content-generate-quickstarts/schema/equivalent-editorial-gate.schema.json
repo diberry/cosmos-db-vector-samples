@@ -1,0 +1,295 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Equivalent editorial gate",
+  "description": "Complete 10-equivalent-gate contract. Defines the gate-manifest.json shape, hash-manifest, and protected-token/claim-report for an approved equivalent editorial gate that replaces mosaic:writer while maintaining the same publication-convention ownership boundary.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "gateName",
+    "gateVersion",
+    "policyName",
+    "policyVersion",
+    "approvalIdentity",
+    "approvalLocator",
+    "invocationMechanism",
+    "stage9ContractHash",
+    "artifactSchemaVersions",
+    "artifactRoot",
+    "inputDirectory",
+    "revisedDirectory",
+    "requiredArtifacts"
+  ],
+  "definitions": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$",
+      "description": "SHA-256 hash in lowercase hex."
+    },
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "hashManifest": {
+      "type": "object",
+      "description": "Maps every original input to its SHA-256 hash and every actual revised output to its SHA-256 hash.",
+      "additionalProperties": false,
+      "required": ["schemaVersion", "runId", "pairs", "unmatchedInputs", "extraOutputs"],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "pairs": {
+          "type": "array",
+          "description": "Matched input-to-output file pairs with hashes.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["inputPath", "inputSha256", "revisedPath", "revisedSha256"],
+            "properties": {
+              "inputPath": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Relative path to the original input file."
+              },
+              "inputSha256": {
+                "$ref": "#/definitions/sha256"
+              },
+              "revisedPath": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Relative path to the revised output file."
+              },
+              "revisedSha256": {
+                "$ref": "#/definitions/sha256"
+              }
+            }
+          }
+        },
+        "unmatchedInputs": {
+          "type": "array",
+          "maxItems": 0,
+          "items": {
+            "type": "string"
+          },
+          "description": "Input files with no corresponding output. Must be empty for the gate to pass."
+        },
+        "extraOutputs": {
+          "type": "array",
+          "maxItems": 0,
+          "items": {
+            "type": "string"
+          },
+          "description": "Output files with no corresponding input. Must be empty for the gate to pass."
+        }
+      }
+    },
+    "protectedTokenClaimReport": {
+      "type": "object",
+      "description": "Compares normalized protected tokens and semantic claims before and after editorial processing.",
+      "additionalProperties": false,
+      "required": [
+        "schemaVersion",
+        "runId",
+        "tokens",
+        "claims",
+        "attemptedMutations",
+        "overallDecision"
+      ],
+      "properties": {
+        "schemaVersion": {
+          "const": 1
+        },
+        "runId": {
+          "type": "string",
+          "minLength": 1
+        },
+        "tokens": {
+          "type": "array",
+          "description": "Per-token before/after comparison.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "tokenId",
+              "beforeValue",
+              "afterValue",
+              "normalizedBefore",
+              "normalizedAfter",
+              "equal"
+            ],
+            "properties": {
+              "tokenId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "beforeValue": {
+                "type": "string",
+                "description": "Token value before editorial processing."
+              },
+              "afterValue": {
+                "type": "string",
+                "description": "Token value after editorial processing."
+              },
+              "normalizedBefore": {
+                "type": "string",
+                "description": "Normalized value before (e.g. backticks stripped)."
+              },
+              "normalizedAfter": {
+                "type": "string",
+                "description": "Normalized value after."
+              },
+              "equal": {
+                "type": "boolean",
+                "description": "Whether normalized values are equal."
+              }
+            }
+          }
+        },
+        "claims": {
+          "type": "array",
+          "description": "Per-claim before/after comparison.",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "claimId",
+              "beforeText",
+              "afterText",
+              "semanticallyEqual"
+            ],
+            "properties": {
+              "claimId": {
+                "type": "string",
+                "minLength": 1
+              },
+              "beforeText": {
+                "type": "string",
+                "description": "Claim text before editorial processing."
+              },
+              "afterText": {
+                "type": "string",
+                "description": "Claim text after editorial processing."
+              },
+              "semanticallyEqual": {
+                "type": "boolean",
+                "description": "Whether the claim meaning is preserved."
+              }
+            }
+          }
+        },
+        "attemptedMutations": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "minLength": 1
+          },
+          "description": "IDs of tokens or claims where a mutation was attempted."
+        },
+        "overallDecision": {
+          "type": "string",
+          "enum": ["pass", "fail"],
+          "description": "Overall decision; fails on any technical change."
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier."
+    },
+    "gateName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Immutable name of the approved editorial gate."
+    },
+    "gateVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Immutable version of the approved editorial gate."
+    },
+    "policyName": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Immutable name of the editorial policy applied by the gate."
+    },
+    "policyVersion": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Immutable version of the editorial policy."
+    },
+    "approvalIdentity": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Identity that approved this gate for use."
+    },
+    "approvalLocator": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Immutable locator (URL or path) to the approval record."
+    },
+    "invocationMechanism": {
+      "type": "string",
+      "minLength": 1,
+      "description": "How the gate is invoked (executable path, import, or API)."
+    },
+    "stage9ContractHash": {
+      "$ref": "#/definitions/sha256",
+      "description": "SHA-256 hash of the Stage 9 protected technical contract that was input to this gate."
+    },
+    "artifactSchemaVersions": {
+      "type": "object",
+      "description": "Map of artifact names to their schema versions.",
+      "additionalProperties": {
+        "type": "integer",
+        "minimum": 1
+      }
+    },
+    "artifactRoot": {
+      "$ref": "#/definitions/absolutePath",
+      "description": "Absolute path to the repository-local artifact root, must end with 10-equivalent-gate."
+    },
+    "inputDirectory": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative directory name for original input files (input/)."
+    },
+    "revisedDirectory": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Relative directory name for revised output files (revised/)."
+    },
+    "requiredArtifacts": {
+      "type": "array",
+      "description": "Constant list of required artifacts in the gate directory.",
+      "items": {
+        "type": "string",
+        "enum": [
+          "input/",
+          "revised/",
+          "editorial-result.json",
+          "change-report.json",
+          "protected-token-claim-report.json",
+          "hash-manifest.json"
+        ]
+      },
+      "minItems": 6,
+      "maxItems": 6,
+      "uniqueItems": true
+    }
+  }
+}

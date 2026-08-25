@@ -1,0 +1,418 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Language evidence",
+  "description": "Stage 6 per-language evidence contract (06-language-evidence/<language>.json). Every field carries a citation tracing it to an authoritative source. No language is derived from another.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "language",
+    "sampleDirectory",
+    "sampleRevision",
+    "runtime",
+    "toolchain",
+    "dependencyInstallCommand",
+    "dependencyManifest",
+    "configurationTemplate",
+    "entryPoint",
+    "controlPlaneModules",
+    "dataPlaneModules",
+    "insertionStrategy",
+    "snippets",
+    "validationCommand",
+    "sdkReferenceLinks",
+    "languageDifferences"
+  ],
+  "definitions": {
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    },
+    "citation": {
+      "type": "object",
+      "description": "Source citation tracing a claim to an authoritative file, revision, and location.",
+      "additionalProperties": false,
+      "required": ["sourcePath", "sourceRevision", "locator", "excerpt"],
+      "properties": {
+        "sourcePath": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Absolute path to the source file."
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Commit SHA or version of the source."
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Heading, line number, or anchor within the source."
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Verbatim excerpt from the source supporting the claim."
+        }
+      }
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "language": {
+      "$ref": "#/definitions/language",
+      "description": "The language this evidence file covers."
+    },
+    "sampleDirectory": {
+      "$ref": "#/definitions/absolutePath",
+      "description": "Absolute path to the language sample directory."
+    },
+    "sampleRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$",
+      "description": "Commit SHA of the sample source pinned for this evidence."
+    },
+    "runtime": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Runtime environment for this language.",
+      "required": ["name", "minimumVersion", "citation"],
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Runtime name (e.g. python, node, dotnet, go, java)."
+        },
+        "minimumVersion": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Minimum required runtime version."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "toolchain": {
+      "type": "array",
+      "description": "Additional toolchain requirements.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "purpose", "citation"],
+        "properties": {
+          "name": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Tool name."
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What the tool is used for."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "dependencyInstallCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Command to install dependencies for this language sample.",
+      "required": ["command", "citation"],
+      "properties": {
+        "command": {
+          "type": "string",
+          "minLength": 1,
+          "description": "The install command (e.g. pip install -r requirements.txt)."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "dependencyManifest": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Dependency manifest file and declared packages.",
+      "required": ["path", "declaredPackages"],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Path to the dependency manifest file."
+        },
+        "declaredPackages": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["name", "version", "surface", "citation"],
+            "properties": {
+              "name": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Package name."
+              },
+              "version": {
+                "type": "string",
+                "minLength": 1,
+                "description": "Package version or constraint."
+              },
+              "surface": {
+                "type": "string",
+                "enum": ["control-plane", "data-plane", "embedding", "other"],
+                "description": "Which SDK surface this package serves."
+              },
+              "citation": {
+                "$ref": "#/definitions/citation"
+              }
+            }
+          }
+        }
+      }
+    },
+    "configurationTemplate": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Configuration template and loading behavior.",
+      "required": ["path", "autoLoaded", "loadingMechanism", "citation"],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Path to the configuration template file."
+        },
+        "autoLoaded": {
+          "type": "boolean",
+          "description": "Whether the template is automatically loaded by the runtime."
+        },
+        "loadingMechanism": {
+          "type": "string",
+          "minLength": 1,
+          "description": "How configuration is loaded (e.g. --env-file, os.environ, ConfigurationBuilder)."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "entryPoint": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Entry point file and run command.",
+      "required": ["path", "runCommand", "citation"],
+      "properties": {
+        "path": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Path to the entry point file."
+        },
+        "runCommand": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Command to run the sample."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "controlPlaneModules": {
+      "type": "array",
+      "description": "Source modules responsible for control-plane operations.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "responsibility", "citation"],
+        "properties": {
+          "path": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Path to the control-plane module."
+          },
+          "responsibility": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What this module is responsible for."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "dataPlaneModules": {
+      "type": "array",
+      "description": "Source modules responsible for data-plane operations.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "responsibility", "citation"],
+        "properties": {
+          "path": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Path to the data-plane module."
+          },
+          "responsibility": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What this module is responsible for."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "insertionStrategy": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "How documents are inserted into Cosmos DB.",
+      "required": ["approach", "sdkConstraint", "citation"],
+      "properties": {
+        "approach": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Insertion approach (e.g. bulk, individual, batch)."
+        },
+        "sdkConstraint": {
+          "type": "string",
+          "minLength": 1,
+          "description": "SDK-specific constraint or behavior affecting insertion."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "snippets": {
+      "type": "array",
+      "description": "Canonical code snippets excerpted from the current sample.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "sourcePath", "startLine", "endLine", "language", "purpose", "verbatimText"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Stable snippet identifier."
+          },
+          "sourcePath": {
+            "$ref": "#/definitions/absolutePath",
+            "description": "Path to the source file containing this snippet."
+          },
+          "startLine": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Starting line number (1-based)."
+          },
+          "endLine": {
+            "type": "integer",
+            "minimum": 1,
+            "description": "Ending line number (1-based, inclusive)."
+          },
+          "language": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Programming language of the snippet for code-fence rendering."
+          },
+          "purpose": {
+            "type": "string",
+            "minLength": 1,
+            "description": "What concept this snippet demonstrates."
+          },
+          "verbatimText": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Verbatim source text of the snippet."
+          }
+        }
+      }
+    },
+    "validationCommand": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Validation commands for this language.",
+      "required": ["languageSpecific", "sharedValidatorInvocation", "citation"],
+      "properties": {
+        "languageSpecific": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Language-specific validation or build command."
+        },
+        "sharedValidatorInvocation": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Invocation of the shared cross-language validator for this language."
+        },
+        "citation": {
+          "$ref": "#/definitions/citation"
+        }
+      }
+    },
+    "sdkReferenceLinks": {
+      "type": "array",
+      "description": "SDK reference documentation links.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "url", "surface"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Display label."
+          },
+          "url": {
+            "type": "string",
+            "format": "uri",
+            "description": "Reference URL."
+          },
+          "surface": {
+            "type": "string",
+            "enum": ["control-plane", "data-plane", "embedding", "other"],
+            "description": "Which SDK surface this reference covers."
+          }
+        }
+      }
+    },
+    "languageDifferences": {
+      "type": "array",
+      "description": "Documented differences where this language diverges from the shared contract due to SDK or runtime requirements.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["concept", "difference", "requiredBySdk", "citation"],
+        "properties": {
+          "concept": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The shared concept this difference relates to."
+          },
+          "difference": {
+            "type": "string",
+            "minLength": 1,
+            "description": "How this language differs."
+          },
+          "requiredBySdk": {
+            "type": "boolean",
+            "description": "Whether the difference is required by the SDK or runtime."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    }
+  }
+}

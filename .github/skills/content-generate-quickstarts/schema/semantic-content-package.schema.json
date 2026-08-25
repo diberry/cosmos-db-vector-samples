@@ -1,0 +1,325 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Semantic content package",
+  "description": "Stage 8 structured content package handed to the editorial gate. Contains sourced claims, required concepts with section roles, protected tokens, audience intent, link targets, product identities, and metadata facts. IMPORTANT: Editorial rendering rules (backticks, branding presentation, Learn/Mosaic metadata shape, style, accessibility, terminology presentation) are OUT OF SCOPE of this schema and are owned exclusively by the editorial gate (Mosaic or approved equivalent).",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schemaVersion",
+    "runId",
+    "articleId",
+    "language",
+    "audienceIntent",
+    "sections",
+    "sourcedClaims",
+    "protectedTokens",
+    "productIdentities",
+    "linkTargets",
+    "metadataFacts"
+  ],
+  "definitions": {
+    "absolutePath": {
+      "type": "string",
+      "minLength": 1,
+      "description": "An absolute filesystem path."
+    },
+    "language": {
+      "type": "string",
+      "enum": ["dotnet", "go", "java", "python", "typescript"],
+      "description": "One of the five supported sample languages."
+    },
+    "citation": {
+      "type": "object",
+      "description": "Source citation tracing a claim to an authoritative file, revision, and location.",
+      "additionalProperties": false,
+      "required": ["sourcePath", "sourceRevision", "locator", "excerpt"],
+      "properties": {
+        "sourcePath": {
+          "$ref": "#/definitions/absolutePath",
+          "description": "Absolute path to the source file."
+        },
+        "sourceRevision": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Commit SHA or version of the source."
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Heading, line number, or anchor within the source."
+        },
+        "excerpt": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Verbatim excerpt from the source supporting the claim."
+        }
+      }
+    },
+    "sectionRole": {
+      "type": "string",
+      "enum": [
+        "spine.outcome-and-scope",
+        "spine.architecture-and-responsibility-boundaries",
+        "spine.prerequisites-and-access",
+        "spine.provision-and-configure",
+        "spine.authenticate-securely",
+        "spine.run-and-understand-the-code",
+        "spine.validate-the-outcome",
+        "spine.clean-up-safely",
+        "spine.continue-learning",
+        "scenario.customer-outcome-and-two-core-ideas",
+        "scenario.responsibility-boundaries",
+        "scenario.prerequisites",
+        "scenario.authentication-model",
+        "scenario.configuration-contract",
+        "scenario.run-and-understand-the-code",
+        "scenario.validate-and-clean-up"
+      ],
+      "description": "The semantic role of a section, drawn from the 9 general spine roles or scenario-specific roles."
+    },
+    "tokenType": {
+      "type": "string",
+      "enum": [
+        "command",
+        "environment-variable",
+        "resource-name",
+        "option",
+        "path",
+        "code-identifier",
+        "url"
+      ],
+      "description": "Classification of a protected token."
+    }
+  },
+  "properties": {
+    "$schema": {
+      "type": "string"
+    },
+    "schemaVersion": {
+      "const": 1
+    },
+    "runId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Run identifier linking this package to its generation run."
+    },
+    "articleId": {
+      "type": "string",
+      "minLength": 1,
+      "description": "Unique article identifier."
+    },
+    "language": {
+      "$ref": "#/definitions/language",
+      "description": "Language this package was generated for."
+    },
+    "audienceIntent": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Audience context for the editorial gate.",
+      "required": ["audience", "priorKnowledge", "outcome"],
+      "properties": {
+        "audience": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Target audience description."
+        },
+        "priorKnowledge": {
+          "type": "string",
+          "minLength": 1,
+          "description": "Expected prior knowledge of the audience."
+        },
+        "outcome": {
+          "type": "string",
+          "minLength": 1,
+          "description": "What the audience achieves after completing the quickstart."
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Ordered sections with semantic roles and required concepts.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["sectionRole", "requiredConcepts", "notApplicable"],
+        "properties": {
+          "sectionRole": {
+            "$ref": "#/definitions/sectionRole"
+          },
+          "requiredConcepts": {
+            "type": "array",
+            "description": "Concepts that must be present in this section.",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["conceptId", "statement", "citations"],
+              "properties": {
+                "conceptId": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "Stable concept identifier."
+                },
+                "statement": {
+                  "type": "string",
+                  "minLength": 1,
+                  "description": "The concept statement."
+                },
+                "citations": {
+                  "type": "array",
+                  "minItems": 1,
+                  "items": {
+                    "$ref": "#/definitions/citation"
+                  }
+                }
+              }
+            }
+          },
+          "notApplicable": {
+            "type": "boolean",
+            "description": "True if this section role does not apply to this article."
+          },
+          "notApplicableEvidence": {
+            "type": "string",
+            "description": "Required evidence when notApplicable is true, explaining why."
+          }
+        }
+      }
+    },
+    "sourcedClaims": {
+      "type": "array",
+      "description": "All technical claims with source citations.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["claimId", "claimText", "citations", "protected"],
+        "properties": {
+          "claimId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique claim identifier."
+          },
+          "claimText": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The technical claim."
+          },
+          "citations": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/definitions/citation"
+            }
+          },
+          "protected": {
+            "type": "boolean",
+            "description": "Whether this claim is protected from editorial modification."
+          }
+        }
+      }
+    },
+    "protectedTokens": {
+      "type": "array",
+      "description": "Tokens whose byte values must be preserved through editorial processing.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["tokenId", "value", "tokenType", "normalizationRule", "citation"],
+        "properties": {
+          "tokenId": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Unique token identifier."
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The exact token value that must be preserved."
+          },
+          "tokenType": {
+            "$ref": "#/definitions/tokenType"
+          },
+          "normalizationRule": {
+            "type": "string",
+            "minLength": 1,
+            "description": "How to normalize this token for comparison after editorial markup (e.g. strip-backticks, strip-inline-code)."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "productIdentities": {
+      "type": "array",
+      "description": "Canonical product names as semantic facts; branding presentation is owned by the editorial gate.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["canonicalName", "citation"],
+        "properties": {
+          "canonicalName": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The canonical product name."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "linkTargets": {
+      "type": "array",
+      "description": "Links to include in the article.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["label", "url", "protected", "citation"],
+        "properties": {
+          "label": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Link display label."
+          },
+          "url": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Link target URL or relative path."
+          },
+          "protected": {
+            "type": "boolean",
+            "description": "Whether this link is a protected technical link that cannot be changed editorially."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    },
+    "metadataFacts": {
+      "type": "array",
+      "description": "Metadata key-value facts to pass to the editorial gate for Learn/Mosaic metadata rendering.",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["key", "value", "citation"],
+        "properties": {
+          "key": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Metadata key."
+          },
+          "value": {
+            "type": "string",
+            "minLength": 1,
+            "description": "Metadata value."
+          },
+          "citation": {
+            "$ref": "#/definitions/citation"
+          }
+        }
+      }
+    }
+  }
+}
